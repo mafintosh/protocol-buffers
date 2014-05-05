@@ -5,5 +5,11 @@
   "dependencies": {
     "proto2json": "^0.1.0",
     "varint": "^1.1.0"
+  },
+  "devDependencies": {
+    "tape": "^2.12.3"
+  },
+  "scripts": {
+    "test": "tape test/*.js"
   }
 }
