@@ -59,7 +59,7 @@ var compile = function(main, messages) {
 					return function(obj, pool) {
 						var offset = push(pool, encodeField(tag, 2));
 						var i = pool.push(null)-1;
-						var len = enc(obj, pool);
+						var len = enc(obj[key], pool);
 						pool[i] = encodeVarint(len);
 						return offset + pool[i].length + len;
 					};
