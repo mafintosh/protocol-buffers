@@ -29,13 +29,10 @@ Transformer.prototype._transform = function(obj, enc, cb) {
 	cb(null, obj);
 };
 
-module.exports = function(main, messages) {
-	if (Buffer.isBuffer(main) || (typeof main === 'string' && !messages)) {
-		messages = parse(main);
-		main = Object.keys(messages)[0];
-	}
-
-	if (Buffer.isBuffer(messages)) messages = parse(messages);
+module.exports = function(messages, main) {
+	if (Buffer.isBuffer(messages) || (typeof messages === 'string')) messages = parse(messages);
+	if (messages.messages) messages = messages.messages;
+	if (!main) main = Object.keys(messages)[0];
 	if (typeof main === 'string') main = messages[main];
 
 	var that = {};
