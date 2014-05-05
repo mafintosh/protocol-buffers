@@ -1,3 +1,5 @@
+var stream = require('stream');
+var util = require('util');
 var proto2json = require('proto2json');
 var encoder = require('./encoder');
 var decoder = require('./decoder');
@@ -9,6 +11,22 @@ var parse = function(buf) {
 		result = buf;
 	});
 	return result.messages;
+};
+
+var Transformer = function(fn) {
+	this._fn = fn;
+	stream.Transform.call(this, {highWaterMark:16, objectMode:true});
+};
+
+util.inherits(Transformer, stream.Transform);
+
+Transformer.prototype._transform = function(obj, enc, cb) {
+	try {
+		obj = this._fn(obj);
+	} catch (err) {
+		return cb(err);
+	}
+	cb(null, obj);
 };
 
 module.exports = function(main, messages) {
@@ -24,6 +42,14 @@ module.exports = function(main, messages) {
 
 	that.encode = encoder(main, messages);
 	that.decode = decoder(main, messages);
+
+	that.createEncodeStream = function() {
+		return new Transformer(that.encode);
+	};
+
+	that.createDecodeStream = function() {
+		return new Transformer(that.decode);
+	};
 
 	return that;
 };
