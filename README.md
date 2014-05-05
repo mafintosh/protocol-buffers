@@ -16,8 +16,8 @@ Assuming the following `test.proto` file exists
 
 ```
 message Test {
-  float num  = 1;
-  string payload = 2;
+  required float num  = 1;
+  required string payload = 2;
 }
 ```
 
