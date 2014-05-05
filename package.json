@@ -3,6 +3,7 @@
   "version": "0.0.0",
   "description": "encode/decode protocol buffers in node with stream support",
   "dependencies": {
-    "proto2json": "^0.1.0"
+    "proto2json": "^0.1.0",
+    "varint": "^1.1.0"
   }
 }
