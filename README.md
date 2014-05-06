@@ -63,7 +63,7 @@ encoder.on('data', function(buf) {
 And similarly if you wanted to decode
 
 ``` js
-var decoder = schema.createEncodeStream();
+var decoder = schema.createDecodeStream();
 
 decoder.write(buf);
 decoder.on('data', function(obj) {
