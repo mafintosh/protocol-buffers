@@ -4,7 +4,7 @@ Encode/decode protocol buffers in node with stream support
 
 	npm install protocol-buffers
 
-[![build status](http://img.shields.io/travis/mafintosh/protocol-buffers.png?style=flat)](http://travis-ci.org/mafintosh/protocol-buffers)
+[![build status](http://img.shields.io/travis/mafintosh/protocol-buffers.svg?style=flat)](http://travis-ci.org/mafintosh/protocol-buffers)
 ![dat](http://img.shields.io/badge/Development%20sponsored%20by-dat-green.svg?style=flat)
 
 ## Usage
