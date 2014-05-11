@@ -77,18 +77,21 @@ you do some sort of delimiting/length-prefixing first
 In addition to passing in a raw proto file you can also specify the schema as JSON
 
 ``` js
-var schema = protobuf({
+var schema = protobuf([{
+	name: 'num',
+	type: 'float'
+}, {
+	name: 'payload',
+	type: 'bytes'
+}, {
+	name: 'some_nested_thing',
 	type: 'object',
 	fields: [{
-		name: 'num',
-		type: 'float'
-	}, {
-		name: 'payload',
-		type: 'bytes'
+		name: 'another_prop',
+		type: 'string'
 	}]
-});
+}]);
 ```
-
 
 ## License
 
