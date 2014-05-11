@@ -1,0 +1,10 @@
+{
+	"type": "object",
+	"fields": [{
+		"name": "num",
+		"type": "float"
+	}, {
+		"name": "payload",
+		"type": "bytes"
+	}]
+}

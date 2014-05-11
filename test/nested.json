@@ -1,0 +1,20 @@
+{
+	"type": "object",
+	"fields": [{
+		"name": "num",
+		"type": "float"
+	}, {
+		"name": "payload",
+		"type": "bytes"
+	}, {
+		"name": "meh",
+		"type": "object",
+		"fields": [{
+			"name": "num",
+			"type": "float"
+		}, {
+			"name": "payload",
+			"type": "bytes"
+		}]
+	}]
+}
