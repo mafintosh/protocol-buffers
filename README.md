@@ -9,8 +9,8 @@ Encode/decode protocol buffers in node with stream support
 
 ## Usage
 
-You should pass a parsed `.proto` file (using [proto2json](https://github.com/Sannis/node-proto2json)) or a raw buffer/string
-consisting of the proto messages. Per default the first message is used as the main one. Add an optional second argument to set it
+You should pass raw a `.proto` file as a buffer (or you can specify the schema as json).
+Per default the first message is used as the main one. Add an optional second argument to set it
 to a specific message
 
 Assuming the following `test.proto` file exists
@@ -73,6 +73,22 @@ decoder.on('data', function(obj) {
 
 Note that each buffer passed to `decoder.write` should contain a full protobuf object so make sure
 you do some sort of delimiting/length-prefixing first
+
+In addition to passing in a raw proto file you can also specify the schema as JSON
+
+``` js
+var schema = protobuf({
+	type: 'object',
+	fields: [{
+		name: 'num',
+		type: 'float'
+	}, {
+		name: 'payload',
+		type: 'bytes'
+	}]
+});
+```
+
 
 ## License
 
