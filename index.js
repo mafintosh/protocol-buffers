@@ -22,6 +22,7 @@ Transformer.prototype._transform = function(obj, enc, cb) {
 
 module.exports = function(schema, main) {
 	if (Buffer.isBuffer(schema) || typeof schema === 'string') return module.exports(parse(schema, main));
+	if (Array.isArray(schema)) schema = {type:'object', fields:schema};
 
 	var that = {};
 
