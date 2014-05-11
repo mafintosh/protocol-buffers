@@ -1,12 +1,12 @@
 var varint = require('varint');
 
-var compile = function(main, messages) {
+var compile = function(schema) {
 	var subtype = function(main) {
 		var types = [];
 
-		Object.keys(main.fields).forEach(function(key) {
-			var field = main.fields[key];
-			var tag = parseInt(main.fields[key].tag, 10);
+		main.fields.forEach(function(field, i) {
+			var tag = field.tag || i;
+			var key = field.name;
 
 			var ondouble = function(obj, buf, offset) {
 				obj[key] = buf.readDoubleBE(offset);
@@ -37,12 +37,30 @@ var compile = function(main, messages) {
 				return offset+len;
 			};
 
-			var onsubtype = function(type) {
+			var onobject = function(type) {
 				var dec = subtype(type);
 				return function(obj, buf, offset) {
-					len = varint.decode(buf, offset);
+					var len = varint.decode(buf, offset);
 					offset += varint.decode.bytesRead;
 					return dec(obj[key] = {}, buf, offset, offset+len);
+				};
+			};
+
+			var onarray = function(type) {
+				var dec = subtype(type.items);
+				return function(obj, buf, offset) {
+					var len = varint.decode(buf, offset);
+					offset += varint.decode.bytesRead;
+					var end = offset + len;
+					obj[key] = [];
+					while (offset < end) {
+						var next = {};
+						obj[key].push(next);
+						var itemLen = varint.decode(buf, offset);
+						offset += varint.decode.bytesRead;
+						offset = dec(next, buf, offset, offset, offset+itemLen);
+					}
+					return offset;
 				};
 			};
 
@@ -58,6 +76,7 @@ var compile = function(main, messages) {
 
 				case 'float':
 				case 'double':
+				case 'number':
 				return types[tag] = ondouble;
 
 				case 'bytes':
@@ -68,9 +87,13 @@ var compile = function(main, messages) {
 
 				case 'bool':
 				return types[tag] = onboolean;
-			}
 
-			if (messages[field.type]) return types[tag] = onsubtype(messages[field.type]);
+				case 'object':
+				return types[tag] = onobject(field);
+
+				case 'array':
+				return types[tag] = onarray(field);
+			}
 
 			throw new Error('Unsupported field type: '+field.type);
 		});
@@ -88,7 +111,7 @@ var compile = function(main, messages) {
 		};
 	};
 
-	var dec = subtype(main);
+	var dec = subtype(schema);
 	return function(buf) {
 		var obj = {};
 		dec(obj, buf, 0, buf.length);

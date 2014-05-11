@@ -1,17 +1,8 @@
 var stream = require('stream');
 var util = require('util');
-var proto2json = require('proto2json');
 var encoder = require('./encoder');
 var decoder = require('./decoder');
-
-var parse = function(buf) {
-	var result;
-	proto2json.parse(buf.toString(), function(err, buf) {
-		if (err) throw err;
-		result = buf;
-	});
-	return result.messages;
-};
+var parse = require('./parse-proto');
 
 var Transformer = function(fn) {
 	this._fn = fn;
@@ -29,16 +20,13 @@ Transformer.prototype._transform = function(obj, enc, cb) {
 	cb(null, obj);
 };
 
-module.exports = function(messages, main) {
-	if (Buffer.isBuffer(messages) || (typeof messages === 'string')) messages = parse(messages);
-	if (messages.messages) messages = messages.messages;
-	if (!main) main = Object.keys(messages)[0];
-	if (typeof main === 'string') main = messages[main];
+module.exports = function(schema, main) {
+	if (Buffer.isBuffer(schema) || typeof schema === 'string') return module.exports(parse(schema, main));
 
 	var that = {};
 
-	that.encode = encoder(main, messages);
-	that.decode = decoder(main, messages);
+	that.encode = encoder(schema);
+	that.decode = decoder(schema);
 
 	that.createEncodeStream = function() {
 		return new Transformer(that.encode);

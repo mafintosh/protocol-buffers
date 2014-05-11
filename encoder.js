@@ -24,12 +24,12 @@ var push = function(pool, val) {
 	return val.length;
 };
 
-var compile = function(main, messages) {
+var compile = function(schema) {
 	var subtype = function(main) {
-		return Object.keys(main.fields)
-			.map(function(key) {
-				var field = main.fields[key];
-				var tag = parseInt(main.fields[key].tag, 10);
+		return main.fields
+			.map(function(field, i) {
+				var tag = field.tag || i;
+				var key = field.name;
 
 				var ondouble = function(obj, pool) {
 					return push(pool, encodeField(tag, 5)) + push(pool, encodeDouble(obj[key]));
@@ -53,7 +53,7 @@ var compile = function(main, messages) {
 					return push(pool, encodeField(tag, 2)) + push(pool, encodeVarint(val.length)) + push(pool, val);
 				};
 
-				var onsubtype = function(type) {
+				var onobject = function(type) {
 					var enc = subtype(type);
 
 					return function(obj, pool) {
@@ -63,7 +63,23 @@ var compile = function(main, messages) {
 						pool[i] = encodeVarint(len);
 						return offset + pool[i].length + len;
 					};
+				};
 
+				var onarray = function(type) {
+					var enc = subtype(type.items);
+
+					return function(obj, pool) {
+						var offset = push(pool, encodeField(tag, 2));
+						var i = pool.push(null)-1;
+						var len = 0;
+
+						obj[key].forEach(function(item) {
+							len += enc(item, pool);
+						});
+
+						pool[i] = encodeVarint(len);
+						return offset + pool[i].length + len;
+					};
 				};
 
 				switch (field.type) {
@@ -78,6 +94,7 @@ var compile = function(main, messages) {
 
 					case 'float':
 					case 'double':
+					case 'number':
 					return ondouble;
 
 					case 'bytes':
@@ -88,12 +105,17 @@ var compile = function(main, messages) {
 
 					case 'bool':
 					return onboolean;
+
+					case 'object':
+					return onobject(field);
+
+					case 'array':
+					return onarray(field);
 				}
 
 				if (messages[field.type]) return onsubtype(messages[field.type]);
 
 				throw new Error('Unsupported field type: '+field.type);
-
 			})
 			.reduce(function(a, b) {
 				return function(obj, pool) {
@@ -102,7 +124,7 @@ var compile = function(main, messages) {
 			});
 	};
 
-	var enc = subtype(main);
+	var enc = subtype(schema);
 	return function(obj) {
 		var pool = [];
 		return Buffer.concat(pool, enc(obj, pool));
