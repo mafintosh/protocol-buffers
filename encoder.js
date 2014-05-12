@@ -26,6 +26,7 @@ var push = function(pool, val) {
 
 var compile = function(schema) {
 	var subtype = function(main) {
+		if (!main.fields) return function(obj, pool) { return 0; };
 		return main.fields
 			.map(function(field, i) {
 				var tag = field.tag || i;
