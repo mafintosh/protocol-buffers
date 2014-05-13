@@ -32,44 +32,52 @@ var compile = function(schema) {
 				var tag = field.tag || i;
 				var key = field.name;
 
-				var ondouble = function(obj, pool) {
+				var wrap = function(fn) {
+					if (field.required) return fn;
+					return function(obj, pool) {
+						if (obj[key] === undefined || obj[key] === null) return 0;
+						return fn(obj, pool);
+					}
+				};
+
+				var ondouble = wrap(function(obj, pool) {
 					return push(pool, encodeField(tag, 5)) + push(pool, encodeDouble(obj[key]));
-				};
+				});
 
-				var onboolean = function(obj, pool) {
+				var onboolean = wrap(function(obj, pool) {
 					return push(pool, encodeBoolean(obj[key]));
-				};
+				});
 
-				var onvarint = function(obj, pool) {
+				var onvarint = wrap(function(obj, pool) {
 					return push(pool, encodeField(tag, 0)) + push(pool, obj[key]);
-				};
+				});
 
-				var onbytes = function(obj, pool) {
+				var onbytes = wrap(function(obj, pool) {
 					var val = obj[key];
 					return push(pool, encodeField(tag, 2)) + push(pool, encodeVarint(val.length)) + push(pool, val);
-				};
+				});
 
-				var onstring = function(obj, pool) {
+				var onstring = wrap(function(obj, pool) {
 					var val = new Buffer(obj[key]);
 					return push(pool, encodeField(tag, 2)) + push(pool, encodeVarint(val.length)) + push(pool, val);
-				};
+				});
 
 				var onobject = function(type) {
 					var enc = subtype(type);
 
-					return function(obj, pool) {
+					return wrap(function(obj, pool) {
 						var offset = push(pool, encodeField(tag, 2));
 						var i = pool.push(null)-1;
 						var len = enc(obj[key], pool);
 						pool[i] = encodeVarint(len);
 						return offset + pool[i].length + len;
-					};
+					});
 				};
 
 				var onarray = function(type) {
 					var enc = subtype(type.items);
 
-					return function(obj, pool) {
+					return wrap(function(obj, pool) {
 						var offset = push(pool, encodeField(tag, 2));
 						var i = pool.push(null)-1;
 						var len = 0;
@@ -80,7 +88,7 @@ var compile = function(schema) {
 
 						pool[i] = encodeVarint(len);
 						return offset + pool[i].length + len;
-					};
+					});
 				};
 
 				switch (field.type) {
