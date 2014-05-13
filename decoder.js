@@ -37,6 +37,13 @@ var compile = function(schema) {
 				return offset+len;
 			};
 
+			var onjson = function(obj, buf, offset) {
+				var len = varint.decode(buf, offset);
+				offset += varint.decode.bytesRead;
+				obj[key] = JSON.parse(buf.slice(offset, offset+len).toString());
+				return offset+len;
+			};
+
 			var onobject = function(type) {
 				var dec = subtype(type);
 				return function(obj, buf, offset) {
@@ -78,6 +85,9 @@ var compile = function(schema) {
 				case 'double':
 				case 'number':
 				return types[tag] = ondouble;
+
+				case 'json':
+				return types[tag] = onjson;
 
 				case 'bytes':
 				return types[tag] = onbytes;

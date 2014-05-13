@@ -62,6 +62,11 @@ var compile = function(schema) {
 					return push(pool, encodeField(tag, 2)) + push(pool, encodeVarint(val.length)) + push(pool, val);
 				});
 
+				var onjson = wrap(function(obj, pool) {
+					var val = new Buffer(JSON.stringify(obj[key]));
+					return push(pool, encodeField(tag, 2)) + push(pool, encodeVarint(val.length)) + push(pool, val);
+				});
+
 				var onobject = function(type) {
 					var enc = subtype(type);
 
@@ -105,6 +110,9 @@ var compile = function(schema) {
 					case 'double':
 					case 'number':
 					return ondouble;
+
+					case 'json':
+					return onjson;
 
 					case 'bytes':
 					return onbytes;
