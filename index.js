@@ -122,7 +122,7 @@ module.exports = function(schema, opts) {
 	};
 
 	that.toJSON = function() {
-		return schema.fields;
+		return schema;
 	};
 
 	that.createEncodeStream = function() {
