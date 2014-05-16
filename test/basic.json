@@ -1,10 +1,7 @@
-{
-	"type": "object",
-	"fields": [{
-		"name": "num",
-		"type": "float"
-	}, {
-		"name": "payload",
-		"type": "bytes"
-	}]
-}
+[{
+	"name": "num",
+	"type": "float"
+}, {
+	"name": "payload",
+	"type": "bytes"
+}]
