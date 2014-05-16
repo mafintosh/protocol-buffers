@@ -17,9 +17,7 @@ var parse = function(proto, main) {
 	main = messages[main];
 
 	var map = function(main) {
-		var result = {};
-		result.type = 'object';
-		result.fields = Object.keys(main.fields).map(function(key) {
+		return Object.keys(main.fields).map(function(key) {
 			var type = main.fields[key].type;
 			var field = {
 				name: key,
@@ -29,13 +27,11 @@ var parse = function(proto, main) {
 
 			if (!messages[type]) return field;
 
-			field.fields = map(messages[field.type]).fields;
+			field.fields = map(messages[field.type]);
 			field.type = 'object';
 
 			return field;
 		});
-
-		return result;
 	};
 
 	return map(main);

@@ -26,8 +26,8 @@ var push = function(pool, val) {
 
 var compile = function(schema) {
 	var subtype = function(main) {
-		if (!main.fields.length) return function(obj, pool) { return 0; };
-		return main.fields
+		if (!main.length) return function(obj, pool) { return 0; };
+		return main
 			.map(function(field, i) {
 				var tag = field.tag || i;
 				var key = field.name;
@@ -68,7 +68,7 @@ var compile = function(schema) {
 				});
 
 				var onobject = function(type) {
-					var enc = subtype(type);
+					var enc = subtype(type.fields);
 
 					return wrap(function(obj, pool) {
 						var offset = push(pool, encodeField(tag, 2));
@@ -130,9 +130,7 @@ var compile = function(schema) {
 					return onarray(field);
 				}
 
-				if (messages[field.type]) return onsubtype(messages[field.type]);
-
-				throw new Error('Unsupported field type: '+field.type);
+				throw new Error('Unsupported field type: '+field.type+' for '+field.name);
 			})
 			.reduce(function(a, b) {
 				return function(obj, pool) {
@@ -144,7 +142,8 @@ var compile = function(schema) {
 	var enc = subtype(schema);
 	return function(obj) {
 		var pool = [];
-		return Buffer.concat(pool, enc(obj, pool));
+		var len = enc(obj, pool);
+		return Buffer.concat(pool, len);
 	};
 };
 

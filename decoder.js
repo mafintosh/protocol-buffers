@@ -4,7 +4,7 @@ var compile = function(schema) {
 	var subtype = function(main) {
 		var types = [];
 
-		main.fields.forEach(function(field, i) {
+		main.forEach(function(field, i) {
 			var tag = field.tag || i;
 			var key = field.name;
 
@@ -45,7 +45,7 @@ var compile = function(schema) {
 			};
 
 			var onobject = function(type) {
-				var dec = subtype(type);
+				var dec = subtype(type.fields);
 				return function(obj, buf, offset) {
 					var len = varint.decode(buf, offset);
 					offset += varint.decode.bytesRead;
@@ -113,7 +113,7 @@ var compile = function(schema) {
 				var prefix = varint.decode(buf, offset);
 				var type = prefix & 0x7;
 				var tag = prefix >> 3;
-				if (!types[tag]) throw new Error('Invalid buffer');
+				if (!types[tag]) throw new Error('Invalid buffer, tag: '+tag);
 				offset = types[tag](obj, buf, offset + varint.decode.bytesRead);
 			}
 
