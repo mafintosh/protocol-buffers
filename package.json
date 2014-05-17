@@ -2,6 +2,7 @@
   "name": "protocol-buffers",
   "version": "0.4.1",
   "description": "encode/decode protocol buffers in node with stream support",
+  "repository": "mafintosh/protocol-buffers",
   "dependencies": {
     "proto2json": "^0.1.0",
     "varint": "^1.1.0"
