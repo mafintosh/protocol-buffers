@@ -9,10 +9,7 @@ Encode/decode protocol buffers in node with stream support
 
 ## Usage
 
-You should pass raw a `.proto` file as a buffer (or you can specify the schema as json).
-Per default the first message is used as the main one. Add an optional second argument to set it
-to a specific message
-
+Pass in a proto file as a [proto2json](https://www.npmjs.org/package/proto2json) object or specify the schema using json
 Assuming the following `test.proto` file exists
 
 ```
@@ -24,7 +21,8 @@ message Test {
 
 ``` js
 var protobuf = require('protocol-buffers');
-var schema = protobuf(fs.readFileSync('test.proto'));
+var proto2json = require('proto2json')
+var schema = protobuf(proto2json.parse(fs.readFileSync('test.proto', 'utf-8')));
 
 var buf = schema.encode({
 	num: 42,
