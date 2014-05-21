@@ -1,19 +1,5 @@
-var proto2json = require('proto2json');
-
-var parseMessages = function(buf) {
-	var result;
-	proto2json.parse(buf.toString(), function(err, buf) {
-		if (err) throw err;
-		result = buf;
-	});
-	return result.messages;
-};
-
-
-var parse = function(proto, main) {
-	var messages = Buffer.isBuffer(proto) || typeof proto === 'string' ? parseMessages(proto) : proto;
+var parse = function(messages, main) {
 	if (!main) main = Object.keys(messages)[0];
-
 	main = messages[main];
 
 	var map = function(main) {

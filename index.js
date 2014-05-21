@@ -42,7 +42,7 @@ module.exports = function(schema, opts) {
 	var main = opts.main;
 	var ignore = opts.ignore;
 
-	if (Buffer.isBuffer(schema) || typeof schema === 'string') schema = parse(schema, main);
+	if (schema.messages) schema = parse(schema.messages, main);
 
 	var that = {};
 	var types = {};
