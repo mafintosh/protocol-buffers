@@ -49,7 +49,7 @@ var compile = function(schema) {
 				});
 
 				var onvarint = wrap(function(obj, pool) {
-					return push(pool, encodeField(tag, 0)) + push(pool, obj[key]);
+					return push(pool, encodeField(tag, 0)) + push(pool, encodeVarint(obj[key]));
 				});
 
 				var onbytes = wrap(function(obj, pool) {
