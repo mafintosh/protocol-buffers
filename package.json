@@ -4,7 +4,7 @@
   "description": "encode/decode protocol buffers in node with stream support",
   "repository": "mafintosh/protocol-buffers",
   "dependencies": {
-    "varint": "^1.1.0"
+    "varint": "^3.0.0"
   },
   "devDependencies": {
     "tape": "^2.12.3"
