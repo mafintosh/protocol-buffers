@@ -8,6 +8,7 @@
   },
   "dependencies": {
     "generate-function": "^1.0.1",
+    "signed-varint": "git://github.com/mafintosh/signed-varint#bytes",
     "varint": "^3.0.0"
   },
   "devDependencies": {

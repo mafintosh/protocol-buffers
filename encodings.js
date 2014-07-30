@@ -1,4 +1,5 @@
 var varint = require('varint')
+var svarint = require('signed-varint')
 
 var encoder = function(type, encode, decode, encodingLength) {
   encode.bytes = decode.bytes = 0
@@ -102,20 +103,42 @@ exports.bool = function() {
   return encoder(0, encode, decode, encodingLength)
 }()
 
-exports.int32 =
-exports.int64 =
+exports.int32 = function() {
+  var decode = function(buffer, offset) {
+    var val = varint.decode(buffer, offset)
+    decode.bytes = varint.decode.bytes
+    return val > 2147483647 ? val - 4294967296 : val
+  }
+
+  var encode = function(val, buffer, offset) {
+    varint.encode(val < 0 ? val + 4294967296 : val, buffer, offset)
+    encode.bytes = varint.encode.bytes
+    return buffer
+  }
+
+  var encodingLength = function(val) {
+    return varint.encodingLength(val < 0 ? val + 4294967296 : val)
+  }
+
+  return encoder(0, varint.encode, decode, encodingLength)
+}()
+
+exports.sint32 =
+exports.sint64 = function() {
+  return encoder(0, svarint.encode, svarint.decode, svarint.encodingLength)
+}()
+
+exports.int64 = // FIXME: negative int64 will be weird since we cannot represent them.
 exports.uint32 =
 exports.uint64 =
-exports.sint32 =
-exports.sint64 =
 exports.enum =
 exports.varint = function() {
   return encoder(0, varint.encode, varint.decode, varint.encodingLength)
 }()
 
 // we cannot represent these in javascript so we just use buffers
-exports.fixed64exports =
-exports.sfixed64exports = function() {
+exports.fixed64 =
+exports.sfixed64 = function() {
   var encodingLength = function(val) {
     return 8
   }
