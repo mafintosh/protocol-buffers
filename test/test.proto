@@ -1,0 +1,10 @@
+message Basic {
+  required double num = 1;
+  required bytes payload = 2;
+}
+
+message Nested {
+  required double num = 1;
+  required bytes payload = 2;
+  required Basic meh = 3;
+}
