@@ -7,6 +7,35 @@ var defined = function(val) {
   return val !== null && val !== undefined
 }
 
+var defaultValue = function(f) {
+  if (f.repeated) return '[]'
+
+  switch (f.type) {
+    case 'string':
+    return '""'
+
+    case 'bool':
+    return 'false'
+
+    case 'float':
+    case 'double':
+    case 'sfixed32':
+    case 'fixed32':
+    case 'varint':
+    case 'enum':
+    case 'uint64':
+    case 'uint32':
+    case 'int64':
+    case 'int32':
+    case 'sint64':
+    case 'sint32':
+    return '0'
+
+    default:
+    return 'null'
+  }
+}
+
 module.exports = function(schema) {
   var messages = {}
   var enums = {}
@@ -153,6 +182,18 @@ module.exports = function(schema) {
       enc: enc
     })
 
+    // compile proto
+
+    var Message = genfun()
+
+    Message('function Message() {')
+    forEach(function(e, f) {
+      Message('%s = %s', genobj('this', f.name), defaultValue(f))
+    })
+    Message('}')
+
+    Message = Message.toFunction()
+
     // compile decode
 
     var invalid = m.fields
@@ -165,15 +206,16 @@ module.exports = function(schema) {
       .join(' || ')
 
     var decode = genfun()
+
+    decode()
       ('function decode(buf, offset, end) {')
         ('if (!offset) offset = 0')
         ('if (!end) end = buf.length')
         ('var oldOffset = offset')
-        ('var obj = {}')
+        ('var obj = new Message()')
 
     forEach(function(e, f, h, val, i) {
       if (f.required) decode('var found%d = false', i)
-      if (f.repeated) decode('%s = []', val)
     })
 
     decode('while (true) {')
@@ -215,11 +257,12 @@ module.exports = function(schema) {
     ('}')
 
     decode = decode.toFunction({
+      Message: Message,
       varint: varint,
       enc: enc
     })
 
-    // end of compilation - return the things
+    // end of compilation - return all the things
 
     encode.bytes = decode.bytes = 0
 
