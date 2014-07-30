@@ -36,7 +36,7 @@ var defaultValue = function(f) {
   }
 }
 
-module.exports = function(schema) {
+module.exports = function(schema, extraEncodings) {
   var messages = {}
   var enums = {}
   var cache = {}
@@ -319,6 +319,7 @@ module.exports = function(schema) {
   }
 
   var resolve = function(name, from) {
+    if (extraEncodings && extraEncodings[name]) return extraEncodings[name]
     if (encodings[name]) return encodings[name]
 
     var m = (from ? from+'.'+name : name).split('.')
