@@ -10,7 +10,7 @@
     "generate-function": "^1.0.1",
     "generate-object-property": "^1.1.0",
     "protobuf-schema": "^1.0.1",
-    "signed-varint": "git://github.com/mafintosh/signed-varint#bytes",
+    "signed-varint": "^2.0.0",
     "varint": "^3.0.0"
   },
   "devDependencies": {
