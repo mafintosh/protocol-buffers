@@ -8,3 +8,7 @@ message Nested {
   required bytes payload = 2;
   required Basic meh = 3;
 }
+
+message Repeated {
+  repeated Basic list = 1;
+}
