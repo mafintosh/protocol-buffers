@@ -82,7 +82,7 @@ module.exports = function(schema) {
         ('var length = 0')
 
     forEach(function(e, f, h, val, i) {
-      if (f.required) encodingLength('if (!defined(%s)) throw new Error("Property is required")', val)()
+      if (f.required) encodingLength('if (!defined(%s)) throw new Error("Property is required")', val)
       else encodingLength('if (defined(%s)) {', val)
 
       if (f.repeated) {
@@ -118,7 +118,7 @@ module.exports = function(schema) {
         ('var oldOffset = offset')
 
     forEach(function(e, f, h, val, i) {
-      if (f.required) encode('if (!defined(%s)) throw new Error("Property is required")', val)()
+      if (f.required) encode('if (!defined(%s)) throw new Error("Property is required")', val)
       else encode('if (defined(%s)) {', val)
 
       if (f.repeated) {
