@@ -84,23 +84,23 @@ On my Macbook Air it gives the following results
 ```
 Benchmarking JSON (baseline)
   Running object encoding benchmark...
-  Encoded 1000000 objects in 2213 ms (451875 enc/s)
+  Encoded 1000000 objects in 2142 ms (466853 enc/s)
 
   Running object decoding benchmark...
-  Decoded 1000000 objects in 988 ms (1012146 dec/s)
+  Decoded 1000000 objects in 970 ms (1030928 dec/s)
 
   Running object encoding+decoding benchmark...
-  Encoded+decoded 1000000 objects in 3434 ms (291206 enc+dec/s)
+  Encoded+decoded 1000000 objects in 3131 ms (319387 enc+dec/s)
 
 Benchmarking protocol-buffers
   Running object encoding benchmark...
-  Encoded 1000000 objects in 2113 ms (473261 enc/s)
+  Encoded 1000000 objects in 2089 ms (478698 enc/s)
 
   Running object decoding benchmark...
-  Decoded 1000000 objects in 886 ms (1128668 dec/s)
+  Decoded 1000000 objects in 735 ms (1360544 dec/s)
 
   Running object encoding+decoding benchmark...
-  Encoded+decoded 1000000 objects in 2994 ms (334001 enc+dec/s)
+  Encoded+decoded 1000000 objects in 2826 ms (353857 enc+dec/s)
 ```
 
 Note that JSON parsing/serialization in node is native function that is *really* fast.
