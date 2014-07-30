@@ -92,16 +92,12 @@ module.exports = function(schema) {
   }
 
   var compileMessage = function(m) {
-    var headers = []
-
     var enc = m.fields.map(function(f, i) {
-      var e = resolve(f.type, m.id)
-      headers[i] = new Buffer(varint.encode(f.tag << 3 | e.type))
-      return e
+      return resolve(f.type, m.id)
     })
 
     var forEach = function(fn) {
-      for (var i = 0; i < enc.length; i++) fn(enc[i], m.fields[i], headers[i], genobj('obj', m.fields[i].name), i)
+      for (var i = 0; i < enc.length; i++) fn(enc[i], m.fields[i], genobj('obj', m.fields[i].name), i)
     }
 
     // compile encodingLength
@@ -110,21 +106,38 @@ module.exports = function(schema) {
       ('function encodingLength(obj) {')
         ('var length = 0')
 
-    forEach(function(e, f, h, val, i) {
+    forEach(function(e, f, val, i) {
+      var packed = f.repeated && f.options && f.options.packed
+      var hl = varint.encodingLength(f.tag << 3 | e.type)
+
       if (f.required) encodingLength('if (!defined(%s)) throw new Error(%s)', val, JSON.stringify(f.name+' is required'))
       else encodingLength('if (defined(%s)) {', val)
 
-      if (f.repeated) {
-        encodingLength('for (var i = 0; i < %s.length; i++) {', val)
-        val += '[i]'
-        encodingLength('if (!defined(%s)) continue', val)
+      if (packed) {
+        encodingLength()
+          ('var packedLen = 0')
+          ('for (var i = 0; i < %s.length; i++) {', val)
+            ('if (!defined(%s)) continue', val+'[i]')
+            ('var len = enc[%d].encodingLength(%s)', i, val+'[i]')
+            ('packedLen += len')
+            if (e.message) encodingLength('packedLen += varint.encodingLength(len)')
+          encodingLength('}')
+          ('if (packedLen) {')
+            ('length += %d + packedLen + varint.encodingLength(packedLen)', hl)
+          ('}')
+      } else {
+        if (f.repeated) {
+          encodingLength('for (var i = 0; i < %s.length; i++) {', val)
+          val += '[i]'
+          encodingLength('if (!defined(%s)) continue', val)
+        }
+
+        encodingLength('var len = enc[%d].encodingLength(%s)', i, val)
+        if (e.message) encodingLength('length += varint.encodingLength(len)')
+        encodingLength('length += %d + len', hl)
+        if (f.repeated) encodingLength('}')
       }
 
-      encodingLength('var len = enc[%d].encodingLength(%s)', i, val)
-      if (e.message) encodingLength('length += varint.encodingLength(len)')
-      encodingLength('length += %d + len', h.length)
-
-      if (f.repeated) encodingLength('}')
       if (!f.required) encodingLength('}')
     })
 
@@ -146,9 +159,28 @@ module.exports = function(schema) {
         ('if (!buf) buf = new Buffer(encodingLength(obj))')
         ('var oldOffset = offset')
 
-    forEach(function(e, f, h, val, i) {
+    forEach(function(e, f, val, i) {
       if (f.required) encode('if (!defined(%s)) throw new Error(%s)', val, JSON.stringify(f.name+' is required'))
       else encode('if (defined(%s)) {', val)
+
+      var packed = f.repeated && f.options && f.options.packed
+      var p = varint.encode(f.tag << 3 | 2)
+      var h = varint.encode(f.tag << 3 | e.type)
+
+      if (packed) {
+        encode()
+          ('var packedLen = 0')
+          ('for (var i = 0; i < %s.length; i++) {', val)
+            ('if (!defined(%s)) continue', val+'[i]')
+            ('packedLen += enc[%d].encodingLength(%s)', i, val+'[i]')
+          ('}')
+
+        encode('if (packedLen) {')
+        for (var j = 0; j < h.length; j++) encode('buf[offset++] = %d', p[j])
+        encode('varint.encode(packedLen, buf, offset)')
+        encode('offset += varint.encode.bytes')
+        encode('}')
+      }
 
       if (f.repeated) {
         encode('for (var i = 0; i < %s.length; i++) {', val)
@@ -156,7 +188,7 @@ module.exports = function(schema) {
         encode('if (!defined(%s)) continue', val)
       }
 
-      for (var j = 0; j < h.length; j++) encode('buf[offset++] = %d', h[j])
+      if (!packed) for (var j = 0; j < h.length; j++) encode('buf[offset++] = %d', h[j])
 
       if (e.message) {
         encode('varint.encode(enc[%d].encodingLength(%s), buf, offset)', i, val)
@@ -214,7 +246,7 @@ module.exports = function(schema) {
         ('var oldOffset = offset')
         ('var obj = new Message()')
 
-    forEach(function(e, f, h, val, i) {
+    forEach(function(e, f, val, i) {
       if (f.required) decode('var found%d = false', i)
     })
 
@@ -229,8 +261,18 @@ module.exports = function(schema) {
       ('var tag = prefix >> 3')
       ('switch (tag) {')
 
-    forEach(function(e, f, h, val, i) {
+    forEach(function(e, f, val, i) {
+      var packed = f.repeated && f.options && f.options.packed
+
       decode('case %d:', f.tag)
+
+      if (packed) {
+        decode()
+          ('var packedEnd = varint.decode(buf, offset)')
+          ('offset += varint.decode.bytes')
+          ('packedEnd += offset')
+          ('while (offset < packedEnd) {')
+      }
 
       if (e.message) {
         decode('var len = varint.decode(buf, offset)')
@@ -242,11 +284,11 @@ module.exports = function(schema) {
         else decode('%s = enc[%d].decode(buf, offset)', val, i)
       }
 
-      if (f.required) decode('found%d = true', i)
+      decode('offset += enc[%d].decode.bytes', i)
 
-      decode()
-        ('offset += enc[%d].decode.bytes', i)
-        ('break')
+      if (packed) decode('}')
+      if (f.required) decode('found%d = true', i)
+      decode('break')
     })
 
     decode()
