@@ -155,6 +155,15 @@ module.exports = function(schema) {
 
     // compile decode
 
+    var invalid = m.fields
+      .map(function(f, i) {
+        return f.required && '!found'+i
+      })
+      .filter(function(f) {
+        return f
+      })
+      .join(' || ')
+
     var decode = genfun()
       ('function decode(buf, offset, end) {')
         ('if (!offset) offset = 0')
@@ -163,11 +172,13 @@ module.exports = function(schema) {
         ('var obj = {}')
 
     forEach(function(e, f, h, val, i) {
+      if (f.required) decode('var found%d = false', i)
       if (f.repeated) decode('%s = []', val)
     })
 
     decode('while (true) {')
       ('if (end <= offset) {')
+        (invalid && 'if (%s) throw new Error("Decoded message is not valid")', invalid)
         ('decode.bytes = offset - oldOffset')
         ('return obj')
       ('}')
@@ -188,6 +199,8 @@ module.exports = function(schema) {
         if (f.repeated) decode('%s.push(enc[%d].decode(buf, offset))', val, i)
         else decode('%s = enc[%d].decode(buf, offset)', val, i)
       }
+
+      if (f.required) decode('found%d = true', i)
 
       decode()
         ('offset += enc[%d].decode.bytes', i)
