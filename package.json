@@ -1,8 +1,11 @@
 {
   "name": "protocol-buffers",
   "version": "1.0.1",
-  "description": "encode/decode protocol buffers in node with stream support",
-  "repository": "mafintosh/protocol-buffers",
+  "description": "Encode / decode protocol buffers in node",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mafintosh/protocol-buffers"
+  },
   "dependencies": {
     "varint": "^3.0.0"
   },
@@ -12,5 +15,26 @@
   "scripts": {
     "test": "tape test/*.js",
     "bench": "node bench"
-  }
+  },
+  "bugs": {
+    "url": "https://github.com/mafintosh/protocol-buffers/issues"
+  },
+  "homepage": "https://github.com/mafintosh/protocol-buffers",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "keywords": [
+    "protobuf",
+    "protocol",
+    "buffers",
+    "protocolbuffers",
+    "encode",
+    "decode",
+    "google",
+    "serialize",
+    "parse"
+  ],
+  "author": "Mathias Buus",
+  "license": "MIT"
 }
