@@ -12,3 +12,10 @@ message Nested {
 message Repeated {
   repeated Basic list = 1;
 }
+
+message Integers {
+  optional sint32 sint32 = 1;
+  optional sint64 sint64 = 2;
+  optional int32 int32 = 3;
+  optional uint32 uint32 = 4;
+}
