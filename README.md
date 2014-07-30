@@ -42,10 +42,23 @@ var buf = messages.Test.encode({
 });
 
 console.log(buf); // should print a buffer
+```
 
+To decode a message use `Test.decode`
+
+``` js
 var obj = messages.Test.decode(buf);
-
 console.log(obj); // should print an object similar to above
+```
+
+Enums are accessed in the same way as messages
+
+``` js
+var buf = messages.AnotherOne.encode({
+	list: [
+		messages.FOO.BAR
+	]
+})
 ```
 
 You can also use `protocol-buffers/require` to require .proto files from disk instead of
