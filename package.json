@@ -1,7 +1,7 @@
 {
   "name": "protocol-buffers",
   "version": "1.0.1",
-  "description": "Encode / decode protocol buffers in node",
+  "description": "Protocol Buffers for Node.js",
   "repository": {
     "type": "git",
     "url": "https://github.com/mafintosh/protocol-buffers"
