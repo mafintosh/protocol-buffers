@@ -27,7 +27,8 @@ tape('integers encode + decode + negative', function(t) {
   var b1 = Integers.encode({
     sint32: -1,
     sint64: -2,
-    int32: -3
+    int32: -3,
+    uint32: 0
   })
 
   var o1 = Integers.decode(b1)
@@ -35,7 +36,8 @@ tape('integers encode + decode + negative', function(t) {
   t.same(o1, {
     sint32: -1,
     sint64: -2,
-    int32: -3
+    int32: -3,
+    uint32: 0
   })
 
   t.end()
