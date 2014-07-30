@@ -7,7 +7,7 @@
     "url": "https://github.com/mafintosh/protocol-buffers"
   },
   "dependencies": {
-    "generate-function": "^1.0.1",
+    "generate-function": "^1.0.2",
     "generate-object-property": "^1.1.0",
     "protobuf-schema": "^1.0.1",
     "signed-varint": "^2.0.0",
