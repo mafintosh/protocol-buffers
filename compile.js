@@ -42,7 +42,7 @@ module.exports = function(schema) {
 
     var encode = genfun()
       ('function encode(val, buf, offset) {')
-        ('if (%s) throw new Error("Invalid enum value")', conditions)
+        ('if (%s) throw new Error("Invalid enum value: "+val)', conditions)
         ('varint.encode(val, buf, offset)')
         ('encode.bytes = varint.encode.bytes')
         ('return buf')
@@ -54,7 +54,7 @@ module.exports = function(schema) {
     var decode = genfun()
       ('function decode(buf, offset) {')
         ('var val = varint.decode(buf, offset)')
-        ('if (%s) throw new Error("Invalid enum value")', conditions)
+        ('if (%s) throw new Error("Invalid enum value: "+val)', conditions)
         ('decode.bytes = varint.decode.bytes')
         ('return val')
       ('}')
@@ -82,7 +82,7 @@ module.exports = function(schema) {
         ('var length = 0')
 
     forEach(function(e, f, h, val, i) {
-      if (f.required) encodingLength('if (!defined(%s)) throw new Error("Property is required")', val)
+      if (f.required) encodingLength('if (!defined(%s)) throw new Error(%s)', val, JSON.stringify(f.name+' is required'))
       else encodingLength('if (defined(%s)) {', val)
 
       if (f.repeated) {
@@ -118,7 +118,7 @@ module.exports = function(schema) {
         ('var oldOffset = offset')
 
     forEach(function(e, f, h, val, i) {
-      if (f.required) encode('if (!defined(%s)) throw new Error("Property is required")', val)
+      if (f.required) encode('if (!defined(%s)) throw new Error(%s)', val, JSON.stringify(f.name+' is required'))
       else encode('if (defined(%s)) {', val)
 
       if (f.repeated) {
@@ -173,7 +173,8 @@ module.exports = function(schema) {
       ('}')
       ('var prefix = varint.decode(buf, offset)')
       ('offset += varint.decode.bytes')
-      ('switch (prefix >> 3) {')
+      ('var tag = prefix >> 3')
+      ('switch (tag) {')
 
     forEach(function(e, f, h, val, i) {
       decode('case %d:', f.tag)
@@ -195,7 +196,7 @@ module.exports = function(schema) {
 
     decode()
           ('default:')
-          ('throw new Error("Unknown tag")')
+          ('throw new Error("Unknown tag: "+tag)')
         ('}')
       ('}')
     ('}')
