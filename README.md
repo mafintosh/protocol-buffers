@@ -61,8 +61,12 @@ available types etc.
 
 ## Performance
 
-This module is fast. It uses code generation to build as fast as possible encoder/decoder for the protobuf schema
-You can running the benchmark yourself by doing `npm run bench`. On my Macbook Air it gives the following results
+This module is fast.
+
+It uses code generation to build as fast as possible encoder/decoder for the protobuf schema
+You can run the benchmarks yourself by doing `npm run bench`.
+
+On my Macbook Air it gives the following results
 
 ```
 Benchmarking JSON (baseline)
