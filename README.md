@@ -28,7 +28,7 @@ message AnotherOne {
 }
 ```
 
-To use the above proto file to encode/decode messages do
+Use the above proto file to encode/decode messages by doing
 
 ``` js
 var protobuf = require('protocol-buffers')
@@ -76,7 +76,7 @@ available types etc.
 
 This module is fast.
 
-It uses code generation to build as fast as possible encoder/decoder for the protobuf schema
+It uses code generation to build as fast as possible encoders/decoders for the protobuf schema.
 You can run the benchmarks yourself by doing `npm run bench`.
 
 On my Macbook Air it gives the following results
@@ -103,7 +103,7 @@ Benchmarking protocol-buffers
   Encoded+decoded 1000000 objects in 2826 ms (353857 enc+dec/s)
 ```
 
-Note that JSON parsing/serialization in node is native function that is *really* fast.
+Note that JSON parsing/serialization in node is a native function that is *really* fast.
 
 ## License
 
