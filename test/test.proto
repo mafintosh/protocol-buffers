@@ -30,3 +30,14 @@ message Packed {
   repeated Basic list = 1 [packed=true];
   repeated string packed = 2 [packed=true];
 }
+
+enum FOO {
+  A = 1;
+  B = 2;
+}
+
+message Defaults {
+  optional int32 num = 1 [default = 42];
+  optional FOO foo1 = 2 [default = B];
+  optional FOO foo2 = 3;
+}
