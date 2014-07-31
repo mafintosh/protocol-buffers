@@ -21,8 +21,9 @@ message Integers {
 }
 
 message Float {
-  optional float float = 1;
+  optional float float1 = 1;
   optional float float2 = 2;
+  optional float float3 = 3;
 }
 
 message Packed {
