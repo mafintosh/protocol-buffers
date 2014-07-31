@@ -20,6 +20,12 @@ message Integers {
   optional uint32 uint32 = 4;
 }
 
+message Float {
+  optional float float1 = 1;
+  optional float float2 = 2;
+  optional float float3 = 3;
+}
+
 message Packed {
   repeated Basic list = 1 [packed=true];
   repeated string packed = 2 [packed=true];

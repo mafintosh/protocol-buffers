@@ -230,7 +230,7 @@ exports.float = function() {
   }
 
   var decode = function(buffer, offset) {
-    var val = buffer.readFloadLE(offset)
+    var val = buffer.readFloatLE(offset)
     decode.bytes = 4
     return val
   }
