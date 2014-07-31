@@ -87,6 +87,9 @@ module.exports = function(schema, extraEncodings) {
         ('decode.bytes = varint.decode.bytes')
         ('return val')
       ('}')
+      .toFunction({
+        varint: varint
+      })
 
     return encodings.make(0, encode, decode, varint.encodingLength)
   }
