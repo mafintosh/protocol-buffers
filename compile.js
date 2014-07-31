@@ -7,14 +7,23 @@ var defined = function(val) {
   return val !== null && val !== undefined
 }
 
-var defaultValue = function(f) {
+var isString = function(def) {
+  try {
+    return !!def && typeof JSON.parse(def) === 'string'
+  } catch (err) {
+    return false
+  }
+}
+
+var defaultValue = function(f, def) {
   if (f.repeated) return '[]'
 
   switch (f.type) {
     case 'string':
-    return '""'
+    return isString(def) ? def : '""'
 
     case 'bool':
+    if (def === 'true') return 'true'
     return 'false'
 
     case 'float':
@@ -29,7 +38,7 @@ var defaultValue = function(f) {
     case 'int32':
     case 'sint64':
     case 'sint32':
-    return '0'
+    return ''+parseInt(def || 0)
 
     default:
     return 'null'
@@ -223,7 +232,17 @@ module.exports = function(schema, extraEncodings) {
 
     Message('function Message() {')
     forEach(function(e, f) {
-      Message('%s = %s', genobj('this', f.name), defaultValue(f))
+      var def = f.options && f.options.default
+      var resolved = resolve(f.type, m.id, false)
+      var vals = resolved && resolved.values
+
+      if (vals) { // is enum
+        def = (def && def in vals) ? vals[def] : vals[Object.keys(vals)[0]]
+        Message('%s = %s', genobj('this', f.name), ''+parseInt(def || 0))
+        return
+      }
+
+      Message('%s = %s', genobj('this', f.name), defaultValue(f, def))
     })
     Message('}')
 
@@ -321,7 +340,7 @@ module.exports = function(schema, extraEncodings) {
     }
   }
 
-  var resolve = function(name, from) {
+  var resolve = function(name, from, compile) {
     if (extraEncodings && extraEncodings[name]) return extraEncodings[name]
     if (encodings[name]) return encodings[name]
 
@@ -334,6 +353,7 @@ module.exports = function(schema, extraEncodings) {
         return result || messages[id] || enums[id]
       }, null)
 
+    if (compile === false) return m
     if (!m) throw new Error('Could not resolve '+name)
 
     if (m.values) return compileEnum(m)
