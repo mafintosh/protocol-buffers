@@ -1,13 +1,15 @@
 var schema = require('protobuf-schema')
 var compile = require('./compile')
 
-module.exports = function(proto, encodings) {
+module.exports = function(proto) {
   if (!proto) throw new Error('Pass in a .proto string or a protobuf-schema parsed object')
 
   var sch = (typeof proto === 'object' && !Buffer.isBuffer(proto)) ? proto : schema.parse(proto)
   var that = {}
 
-  compile(sch, encodings).forEach(function(m) {
+  that.encodings = {}
+
+  compile(sch, that.encodings).forEach(function(m) {
     that[m.name] = m.values || m
   })
 
