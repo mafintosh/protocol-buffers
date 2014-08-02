@@ -1,6 +1,6 @@
 {
   "name": "protocol-buffers",
-  "version": "2.2.0",
+  "version": "2.2.1",
   "description": "Protocol Buffers for Node.js",
   "repository": {
     "type": "git",
