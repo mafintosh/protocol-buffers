@@ -104,6 +104,10 @@ module.exports = function(schema, extraEncodings) {
   }
 
   var compileMessage = function(m, exports) {
+    exports.type = 2
+    exports.message = true
+    exports.name = m.name
+
     var enc = m.fields.map(function(f, i) {
       return resolve(f.type, m.id)
     })
@@ -330,9 +334,6 @@ module.exports = function(schema, extraEncodings) {
 
     encode.bytes = decode.bytes = 0
 
-    exports.type = 2
-    exports.message = true
-    exports.name = m.name
     exports.encode = encode
     exports.decode = decode
     exports.encodingLength = encodingLength
