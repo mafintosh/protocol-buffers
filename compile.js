@@ -103,7 +103,7 @@ module.exports = function(schema, extraEncodings) {
     return encodings.make(0, encode, decode, varint.encodingLength)
   }
 
-  var compileMessage = function(m) {
+  var compileMessage = function(m, exports) {
     var enc = m.fields.map(function(f, i) {
       return resolve(f.type, m.id)
     })
@@ -330,14 +330,14 @@ module.exports = function(schema, extraEncodings) {
 
     encode.bytes = decode.bytes = 0
 
-    return {
-      type: 2,
-      message: true,
-      name: m.name,
-      encode: encode,
-      decode: decode,
-      encodingLength: encodingLength
-    }
+    exports.type = 2
+    exports.message = true
+    exports.name = m.name
+    exports.encode = encode
+    exports.decode = decode
+    exports.encodingLength = encodingLength
+
+    return exports
   }
 
   var resolve = function(name, from, compile) {
@@ -357,7 +357,7 @@ module.exports = function(schema, extraEncodings) {
     if (!m) throw new Error('Could not resolve '+name)
 
     if (m.values) return compileEnum(m)
-    return cache[m.id] || (cache[m.id] = compileMessage(m))
+    return cache[m.id] || compileMessage(m, cache[m.id] = {})
   }
 
   return schema.enums.concat(schema.messages.map(function(message) {
