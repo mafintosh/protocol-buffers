@@ -3,6 +3,30 @@ var varint = require('varint')
 var genobj = require('generate-object-property')
 var genfun = require('generate-function')
 
+var skip = function(type, buffer, offset) {
+  switch (type) {
+    case 0:
+    varint.decode(buffer, offset)
+    return offset + varint.decode.bytes
+
+    case 1:
+    return offset + 8
+
+    case 2:
+    var len = varint.decode(buffer, offset)
+    return offset + varint.decode.bytes + len
+
+    case 3:
+    case 4:
+    throw new Error('Groups are not supported')
+
+    case 5:
+    return offset + 4
+  }
+
+  throw new Error('Unknown wire type: '+type)
+}
+
 var defined = function(val) {
   return val !== null && val !== undefined
 }
@@ -319,7 +343,7 @@ module.exports = function(schema, extraEncodings) {
 
     decode()
           ('default:')
-          ('throw new Error("Unknown tag: "+tag)')
+          ('offset = skip(prefix & 7, buf, offset)')
         ('}')
       ('}')
     ('}')
@@ -327,6 +351,7 @@ module.exports = function(schema, extraEncodings) {
     decode = decode.toFunction({
       Message: Message,
       varint: varint,
+      skip: skip,
       enc: enc
     })
 
