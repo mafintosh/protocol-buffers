@@ -265,8 +265,12 @@ module.exports = function(schema, extraEncodings) {
       var vals = resolved && resolved.values
 
       if (vals) { // is enum
-        def = (def && def in vals) ? vals[def] : vals[Object.keys(vals)[0]]
-        Message('%s = %s', genobj('this', f.name), ''+parseInt(def || 0))
+        if (f.repeated) {
+          Message('%s = []', genobj('this', f.name))
+        } else {
+          def = (def && def in vals) ? vals[def] : vals[Object.keys(vals)[0]]
+          Message('%s = %s', genobj('this', f.name), ''+parseInt(def || 0))
+        }
         return
       }
 
