@@ -40,4 +40,5 @@ message Defaults {
   optional int32 num = 1 [default = 42];
   optional FOO foo1 = 2 [default = B];
   optional FOO foo2 = 3;
+  repeated FOO foos = 4;
 }

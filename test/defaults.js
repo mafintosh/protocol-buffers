@@ -6,7 +6,8 @@ tape('defaults decode', function(t) {
   var o1 = Defaults.decode(new Buffer(0)) // everything default
 
   var b2 = Defaults.encode({
-    num: 10
+    num: 10,
+    foos: [1]
   })
 
   var b3 = Defaults.encode({
@@ -17,19 +18,22 @@ tape('defaults decode', function(t) {
   t.same(Defaults.decode(b3), {
     num: 10,
     foo1: 2,
-    foo2: 2
+    foo2: 2,
+    foos: []
   }, '1 default')
 
   t.same(o1, {
     num: 42,
     foo1: 2,
-    foo2: 1
+    foo2: 1,
+    foos: [],
   }, 'all defaults')
 
   t.same(Defaults.decode(b2), {
     num: 10,
     foo1: 2,
-    foo2: 1
+    foo2: 1,
+    foos: [1]
   }, '2 defaults')
 
   t.end()
