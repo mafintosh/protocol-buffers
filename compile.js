@@ -390,7 +390,7 @@ module.exports = function(schema, extraEncodings) {
     return cache[m.id] || compileMessage(m, cache[m.id] = {})
   }
 
-  return schema.enums.concat(schema.messages.map(function(message) {
+  return (schema.enums || []).concat((schema.messages || []).map(function(message) {
     return resolve(message.id)
   }))
 }
