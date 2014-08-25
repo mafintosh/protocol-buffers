@@ -251,7 +251,8 @@ module.exports = function(schema, extraEncodings) {
       encodingLength: encodingLength,
       defined: defined,
       varint: varint,
-      enc: enc
+      enc: enc,
+      Buffer: Buffer
     })
 
     // compile proto
