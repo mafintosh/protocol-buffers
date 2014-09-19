@@ -8,7 +8,8 @@ tape('integers encode + decode', function(t) {
     sint32: 1,
     sint64: 2,
     int32: 3,
-    uint32: 4
+    uint32: 4,
+    int64: 5
   })
 
   var o1 = Integers.decode(b1)
@@ -17,7 +18,8 @@ tape('integers encode + decode', function(t) {
     sint32: 1,
     sint64: 2,
     int32: 3,
-    uint32: 4
+    uint32: 4,
+    int64: 5
   })
 
   t.end()
@@ -28,7 +30,8 @@ tape('integers encode + decode + negative', function(t) {
     sint32: -1,
     sint64: -2,
     int32: -3,
-    uint32: 0
+    uint32: 0,
+    int64: -1 * Math.pow(2,52) - 5
   })
 
   var o1 = Integers.decode(b1)
@@ -37,7 +40,8 @@ tape('integers encode + decode + negative', function(t) {
     sint32: -1,
     sint64: -2,
     int32: -3,
-    uint32: 0
+    uint32: 0,
+    int64: -1 * Math.pow(2,52) - 5
   })
 
   t.end()
