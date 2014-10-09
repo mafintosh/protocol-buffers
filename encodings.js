@@ -127,7 +127,7 @@ exports.int64 = function() {
   var decode = function(buffer, offset) {
     var val = varint.decode(buffer, offset)
     var v1 = val;
-    if (val > Math.pow(2,63)) {
+    if (val >= Math.pow(2,63)) {
         var limit = 9;
         while (buffer[offset+limit-1] === 0xff) limit--
         limit = limit || 9;
