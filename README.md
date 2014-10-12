@@ -44,6 +44,14 @@ var buf = messages.Test.encode({
 console.log(buf); // should print a buffer
 ```
 
+You can also use `protocol-buffers/require` to require .proto files from disk instead of
+passing them as buffers.
+
+``` js
+var protobuf = require('protocol-buffers/require')
+var messages = protobuf('test.proto') // will load and parse __dirname/test.proto
+```
+
 To decode a message use `Test.decode`
 
 ``` js
@@ -59,14 +67,6 @@ var buf = messages.AnotherOne.encode({
 		messages.FOO.BAR
 	]
 })
-```
-
-You can also use `protocol-buffers/require` to require .proto files from disk instead of
-passing them as buffers
-
-``` js
-var protobuf = require('protocol-buffers/require')
-var messages = protobuf('test.proto') // will load and parse __dirname/test.proto
 ```
 
 See the [Google Protocol Buffers docs](https://developers.google.com/protocol-buffers/) for more information about the
