@@ -44,19 +44,19 @@ var buf = messages.Test.encode({
 console.log(buf); // should print a buffer
 ```
 
+To decode a message use `Test.decode`
+
+``` js
+var obj = messages.Test.decode(buf);
+console.log(obj); // should print an object similar to above
+```
+
 You can also use `protocol-buffers/require` to require .proto files from disk instead of
 passing them as buffers.
 
 ``` js
 var protobuf = require('protocol-buffers/require')
 var messages = protobuf('test.proto') // will load and parse __dirname/test.proto
-```
-
-To decode a message use `Test.decode`
-
-``` js
-var obj = messages.Test.decode(buf);
-console.log(obj); // should print an object similar to above
 ```
 
 Enums are accessed in the same way as messages
