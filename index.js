@@ -6,7 +6,7 @@ module.exports = function(proto, opts) {
   if (!opts) opts = {}
   if (!proto) throw new Error('Pass in a .proto string or a protobuf-schema parsed object')
 
-  var sch = (typeof proto === 'object' && !Buffer.isBuffer(proto)) ? proto : schema.parse(proto)
+  var sch = (typeof proto === 'object' && !Buffer.isBuffer(proto)) ? proto : schema.parse(proto, opts)
 
   // to not make toString,toJSON enumarable we make a fire-and-forget prototype
   var Messages = function() {

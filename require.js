@@ -6,5 +6,5 @@ var protobuf = require('./')
 delete require.cache[require.resolve(__filename)]
 
 module.exports = function(filename, opts) {
-  return protobuf(resolve.sync(path.resolve(path.dirname(module.parent.filename), filename)), opts)
+  return protobuf(resolve.sync(path.resolve(path.dirname(module.parent.filename), filename), opts))
 }
