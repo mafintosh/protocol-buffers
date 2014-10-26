@@ -1,6 +1,6 @@
 {
   "name": "protocol-buffers",
-  "version": "2.3.6",
+  "version": "2.4.0",
   "description": "Protocol Buffers for Node.js",
   "repository": {
     "type": "git",
@@ -9,7 +9,8 @@
   "dependencies": {
     "generate-function": "^1.0.2",
     "generate-object-property": "^1.1.0",
-    "protobuf-schema": "^1.0.1",
+    "protobuf-schema": "^1.2.0",
+    "resolve-protobuf-schema": "^1.0.2",
     "signed-varint": "^2.0.0",
     "varint": "^3.0.0"
   },
