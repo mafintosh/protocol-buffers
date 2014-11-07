@@ -123,12 +123,56 @@ exports.int32 = function() {
   return encoder(0, varint.encode, decode, encodingLength)
 }()
 
+exports.int64 = function() {
+  var decode = function(buffer, offset) {
+    var val = varint.decode(buffer, offset)
+    var v1 = val;
+    if (val >= Math.pow(2,63)) {
+        var limit = 9;
+        while (buffer[offset+limit-1] === 0xff) limit--
+        limit = limit || 9;
+        var subset = new Buffer(limit)
+        buffer.copy(subset, 0, offset, offset+limit)
+        subset[limit-1] = subset[limit-1] & 0x7f
+        val = -1 * varint.decode(subset, 0)
+        decode.bytes = 10
+    } else {
+      decode.bytes = varint.decode.bytes
+    }
+    return val
+  }
+
+  var encode = function(val, buffer, offset) {
+    if (val < 0) {
+      var last = offset + 9;
+      varint.encode(val * -1, buffer, offset)
+      offset += varint.encode.bytes - 1
+      buffer[offset] = buffer[offset] | 0x80
+      while (offset < last - 1) {
+        offset++
+        buffer[offset] = 0xff
+      }
+      buffer[last] = 0x01
+      encode.bytes = 10
+    } else {
+      varint.encode(val, buffer, offset)
+      encode.bytes = varint.encode.bytes
+    }
+    return buffer
+  }
+
+  var encodingLength = function(val) {
+    return val < 0 ? 10 : varint.encodingLength(val)
+  }
+
+  return encoder(0, encode, decode, encodingLength)
+}()
+
 exports.sint32 =
 exports.sint64 = function() {
   return encoder(0, svarint.encode, svarint.decode, svarint.encodingLength)
 }()
 
-exports.int64 = // FIXME: negative int64 will be weird since we cannot represent them.
 exports.uint32 =
 exports.uint64 =
 exports.enum =
