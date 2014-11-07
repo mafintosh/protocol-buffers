@@ -126,16 +126,15 @@ exports.int32 = function() {
 exports.int64 = function() {
   var decode = function(buffer, offset) {
     var val = varint.decode(buffer, offset)
-    var v1 = val;
     if (val >= Math.pow(2,63)) {
-        var limit = 9;
-        while (buffer[offset+limit-1] === 0xff) limit--
-        limit = limit || 9;
-        var subset = new Buffer(limit)
-        buffer.copy(subset, 0, offset, offset+limit)
-        subset[limit-1] = subset[limit-1] & 0x7f
-        val = -1 * varint.decode(subset, 0)
-        decode.bytes = 10
+      var limit = 9;
+      while (buffer[offset+limit-1] === 0xff) limit--
+      limit = limit || 9;
+      var subset = new Buffer(limit)
+      buffer.copy(subset, 0, offset, offset+limit)
+      subset[limit-1] = subset[limit-1] & 0x7f
+      val = -1 * varint.decode(subset, 0)
+      decode.bytes = 10
     } else {
       decode.bytes = varint.decode.bytes
     }
