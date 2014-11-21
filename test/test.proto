@@ -3,6 +3,11 @@ message Basic {
   required bytes payload = 2;
 }
 
+message UTF8 {
+  required string foo = 1;
+  required uint32 bar = 2;
+}
+
 message Nested {
   required double num = 1;
   required bytes payload = 2;
