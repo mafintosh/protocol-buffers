@@ -50,7 +50,8 @@ exports.bytes = function(tag) {
 
 exports.string = function() {
   var encodingLength = function(val) {
-    return varint.encodingLength(val.length) + Buffer.byteLength(val)
+    var len = Buffer.byteLength(val)
+    return varint.encodingLength(len) + len
   }
 
   var encode = function(val, buffer, offset) {
