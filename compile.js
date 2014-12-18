@@ -34,11 +34,12 @@ var defaultValue = function (f, def) {
 
   switch (f.type) {
     case 'string':
-      return isString(def) ? def : '""'
+      return isString(def) ? def : 'null'
 
     case 'bool':
       if (def === 'true') return 'true'
-      return 'false'
+      if (def === 'false') return 'false'
+      return 'null'
 
     case 'float':
     case 'double':
@@ -52,7 +53,7 @@ var defaultValue = function (f, def) {
     case 'int32':
     case 'sint64':
     case 'sint32':
-      return '' + Number(def || 0)
+      return (def === null) ? 'null' : '' + Number(def || 0)
 
     default:
       return 'null'
