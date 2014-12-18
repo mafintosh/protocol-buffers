@@ -1,58 +1,32 @@
+var Benchmark = require('benchmark')
 var protobuf = require('../require')
 var messages = protobuf('./bench.proto')
+var Test = messages.Test
 
-var TIMES = 1000000
-
-var then = 0
-var diff = 0
-
-var run = function(name, encode, decode) {
-  var EXAMPLE = {
-    foo: 'hello',
-    hello: 42,
-    meh: {
-      b: {
-        tmp: {
-          baz: 1000
-        }
-      },
-      lol: 'lol'
-    }
+var obj = {
+  foo: 'hello',
+  hello: 42,
+  meh: {
+    b: {
+      tmp: {
+        baz: 1000
+      }
+    },
+    lol: 'lol'
   }
-
-  var EXAMPLE_BUFFER = encode(EXAMPLE)
-
-  console.log('Benchmarking %s', name)
-  console.log('  Running object encoding benchmark...')
-
-  then = Date.now()
-  for (var i = 0; i < TIMES; i++) {
-    encode(EXAMPLE)
-  }
-  diff = Date.now() - then
-
-  console.log('  Encoded %d objects in %d ms (%d enc/s)\n', TIMES, diff, (1000 * TIMES / diff).toFixed(0))
-
-  console.log('  Running object decoding benchmark...')
-
-  then = Date.now()
-  for (var i = 0; i < TIMES; i++) {
-    decode(EXAMPLE_BUFFER)
-  }
-  diff = Date.now() - then
-
-  console.log('  Decoded %d objects in %d ms (%d dec/s)\n', TIMES, diff, (1000 * TIMES / diff).toFixed(0))
-
-  console.log('  Running object encoding+decoding benchmark...')
-
-  then = Date.now()
-  for (var i = 0; i < TIMES; i++) {
-    decode(encode(EXAMPLE))
-  }
-  diff = Date.now() - then
-
-  console.log('  Encoded+decoded %d objects in %d ms (%d enc+dec/s)\n', TIMES, diff, (1000 * TIMES / diff).toFixed(0))
 }
+var json = JSON.stringify(obj)
+var buffer = Test.encode(obj)
 
-run('JSON (baseline)', JSON.stringify, JSON.parse)
-run('protocol-buffers', messages.Test.encode, messages.Test.decode)
+var benchOptions = {minSamples: 500}
+var suite = new Benchmark.Suite()
+
+suite
+  .add('JSON (baseline) encoding:', function() {JSON.stringify(obj)},  benchOptions)
+  .add('JSON (baseline) decoding:', function() {JSON.parse(json)},  benchOptions)
+  .add('JSON (baseline) encoding + decoding:', function() {JSON.parse(JSON.stringify(obj))}, benchOptions)
+  .add('protocol-buffers encoding:', function() {Test.encode(obj)},  benchOptions)
+  .add('protocol-buffers decoding:', function() {Test.decode(buffer)},  benchOptions)
+  .add('protocol-buffers encoding + decoding:', function() {Test.decode(Test.encode(obj))}, benchOptions)
+  .on('cycle', function(event){console.log(String(event.target))})
+  .run({async: false})
