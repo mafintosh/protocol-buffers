@@ -364,6 +364,7 @@ module.exports = function(schema, extraEncodings) {
 
     encode.bytes = decode.bytes = 0
 
+    exports.buffer = true
     exports.encode = encode
     exports.decode = decode
     exports.encodingLength = encodingLength
