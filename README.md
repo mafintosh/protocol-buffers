@@ -15,7 +15,7 @@ Assuming the following `test.proto` file exists
 
 ```
 enum FOO {
-	BAR = 1;
+  BAR = 1;
 }
 
 message Test {
@@ -24,7 +24,7 @@ message Test {
 }
 
 message AnotherOne {
-	repeated FOO list = 1;
+  repeated FOO list = 1;
 }
 ```
 
@@ -37,18 +37,18 @@ var protobuf = require('protocol-buffers')
 var messages = protobuf(fs.readFileSync('test.proto'))
 
 var buf = messages.Test.encode({
-	num: 42,
-	payload: 'hello world'
-});
+  num: 42,
+  payload: 'hello world'
+})
 
-console.log(buf); // should print a buffer
+console.log(buf) // should print a buffer
 ```
 
 To decode a message use `Test.decode`
 
 ``` js
-var obj = messages.Test.decode(buf);
-console.log(obj); // should print an object similar to above
+var obj = messages.Test.decode(buf)
+console.log(obj) // should print an object similar to above
 ```
 
 You can also use `protocol-buffers/require` to require .proto files from disk instead of
@@ -63,9 +63,9 @@ Enums are accessed in the same way as messages
 
 ``` js
 var buf = messages.AnotherOne.encode({
-	list: [
-		messages.FOO.BAR
-	]
+  list: [
+    messages.FOO.BAR
+  ]
 })
 ```
 
