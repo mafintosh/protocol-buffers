@@ -105,6 +105,22 @@ Benchmarking protocol-buffers
 
 Note that JSON parsing/serialization in node is a native function that is *really* fast.
 
+## Leveldb encoding compatibility
+
+Compiled protocol buffers messages are valid levelup encodings.
+This means you can pass them as `valueEncoding` and `keyEncoding`.
+
+``` js
+var level = require('level')
+var db = level('db')
+
+db.put('hello', {payload:'world'}, {valueEncoding:messages.Test}, function(err) {
+  db.get('hello', {valueEncoding:messages.Test}, function(err, message) {
+    console.log(message)
+  })
+})
+```
+
 ## License
 
 MIT
