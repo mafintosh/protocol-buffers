@@ -298,6 +298,7 @@ module.exports = function(schema, extraEncodings) {
       ('function decode(buf, offset, end) {')
         ('if (!offset) offset = 0')
         ('if (!end) end = buf.length')
+        ('else if (end > buf.length || offset > buf.length) throw new Error("Decoded message is not valid")')
         ('var oldOffset = offset')
         ('var obj = new Message()')
 
