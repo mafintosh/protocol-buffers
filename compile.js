@@ -132,6 +132,10 @@ module.exports = function(schema, extraEncodings) {
     exports.message = true
     exports.name = m.name
 
+    m.enums.forEach(function( val ) {
+      exports[ val.name ] = val.values
+    })
+
     var enc = m.fields.map(function(f, i) {
       return resolve(f.type, m.id)
     })
