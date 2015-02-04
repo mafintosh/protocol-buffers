@@ -69,6 +69,16 @@ var buf = messages.AnotherOne.encode({
 })
 ```
 
+Nested emums are accessed as properties on the corresponding message
+
+``` js
+var buf = message.SomeMessage.encode({
+  list: [
+    messages.SomeMessage.NESTED_ENUM.VALUE
+  ]
+})
+```
+
 See the [Google Protocol Buffers docs](https://developers.google.com/protocol-buffers/) for more information about the
 available types etc.
 
