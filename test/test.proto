@@ -48,3 +48,43 @@ message Defaults {
   optional FOO foo2 = 3;
   repeated FOO foos = 4;
 }
+
+message Property {
+  required string name = 1;
+  optional string desc = 2;
+  
+  oneof value {
+    bool bool_value  = 3;
+    float float_value = 4;
+    int32 int_value = 5;
+    string string_value = 6;
+  }
+}
+
+message PropertyNoOneof {
+  required string name = 1;
+  optional string desc = 2;
+
+  optional bool bool_value  = 3;
+  optional float float_value = 4;
+  optional int32 int_value = 5;
+  optional string string_value = 6;
+}
+
+message ComplexProperty {
+  required string name = 1;
+  
+  oneof value {
+    bool bool_value  = 3;
+    float float_value = 4;
+    int32 int_value = 5;
+    string string_value = 6;
+  }
+
+  oneof another_value {
+    bool bool_value  = 7;
+    float float_value = 8;
+    int32 int_value = 9;
+    string string_value = 10;
+  }
+}
