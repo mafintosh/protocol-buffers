@@ -48,3 +48,8 @@ message Defaults {
   optional FOO foo2 = 3;
   repeated FOO foos = 4;
 }
+
+enum FOO_HEX {
+  A = 0x01;
+  B = 0x02;
+}

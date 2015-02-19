@@ -9,7 +9,7 @@
   "dependencies": {
     "generate-function": "^2.0.0",
     "generate-object-property": "^1.1.0",
-    "protobuf-schema": "^1.4.2",
+    "protobuf-schema": "^1.5.0",
     "resolve-protobuf-schema": "^1.0.2",
     "signed-varint": "^2.0.0",
     "varint": "^4.0.0"
