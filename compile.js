@@ -136,12 +136,29 @@ module.exports = function(schema, extraEncodings) {
       exports[ val.name ] = val.values
     })
 
-    var enc = m.fields.map(function(f, i) {
+    var oneofMap = {}
+    var oneofs = m.oneof.reduce(function(arr, o){
+      fields = o.fields.map(function(f){
+          oneofMap[f.name] = o.name
+          return {
+            name: f.name,
+            type: f.type,
+            tag: f.tag,
+            required: false,
+            oneof: o.name
+          }
+      }, this)
+      return arr.concat(fields)
+    }, [], this)
+    var hasOneofs = (oneofs.length > 0)
+
+    var fields = m.fields.concat(oneofs)
+    var enc = fields.map(function(f) {
       return resolve(f.type, m.id)
     })
 
     var forEach = function(fn) {
-      for (var i = 0; i < enc.length; i++) fn(enc[i], m.fields[i], genobj('obj', m.fields[i].name), i)
+      for (var i = 0; i < enc.length; i++) fn(enc[i], fields[i], genobj('obj', fields[i].name), i)
     }
 
     // compile encodingLength
@@ -199,6 +216,23 @@ module.exports = function(schema, extraEncodings) {
 
     var encode = genfun()
       ('function encode(obj, buf, offset) {')
+        if (hasOneofs){
+          // build up clean object with only the last field set for each oneof
+          encode()
+          ('var cleanObj={}, foundOneofs = {}')
+          ('var oneofs = %s', JSON.stringify(oneofMap))
+          ('for (var f in obj) {')
+            ('cleanObj[f] = obj[f]')
+            ('if (oneofs[f] != null) {')
+              ('if (foundOneofs[oneofs[f]] != null) {')
+                ('delete cleanObj[foundOneofs[oneofs[f]]]')
+              ('}')
+              ('foundOneofs[oneofs[f]] = f')
+            ('}')
+          ('}')
+          ('obj = cleanObj')
+        }
+        encode()
         ('if (!offset) offset = 0')
         ('if (!buf) buf = new Buffer(encodingLength(obj))')
         ('var oldOffset = offset')
@@ -279,7 +313,10 @@ module.exports = function(schema, extraEncodings) {
         return
       }
 
-      Message('%s = %s', genobj('this', f.name), defaultValue(f, def))
+      // only set defaults if not a oneof
+      if (f.oneof == null) {
+        Message('%s = %s', genobj('this', f.name), defaultValue(f, def))
+      }
     })
     Message('}')
 
@@ -305,6 +342,11 @@ module.exports = function(schema, extraEncodings) {
         ('if (!(end <= buf.length && offset <= buf.length)) throw new Error("Decoded message is not valid")')
         ('var oldOffset = offset')
         ('var obj = new Message()')
+        if (hasOneofs){
+          decode()
+          ('var oneofs = %s', JSON.stringify(oneofMap))
+          ('var foundOneofs = {}')
+        }
 
     forEach(function(e, f, val, i) {
       if (f.required) decode('var found%d = false', i)
@@ -341,7 +383,19 @@ module.exports = function(schema, extraEncodings) {
         else decode('%s = enc[%d].decode(buf, offset, offset + len)', val, i)
       } else {
         if (f.repeated) decode('%s.push(enc[%d].decode(buf, offset))', val, i)
-        else decode('%s = enc[%d].decode(buf, offset)', val, i)
+        else {
+          decode('%s = enc[%d].decode(buf, offset)', val, i)
+          // if a oneof, only keep the last value in the buffer
+          if (hasOneofs && f.oneof != null) {
+            decode('var f = "%s"', f.name)
+            ('if (oneofs[f] != null) {')
+              ('if (foundOneofs[oneofs[f]] != null) {')
+                ('delete obj[foundOneofs[oneofs[f]]]')
+              ('}')
+              ('foundOneofs[oneofs[f]] = f')
+            ('}')
+          }
+        }
       }
 
       decode('offset += enc[%d].decode.bytes', i)
