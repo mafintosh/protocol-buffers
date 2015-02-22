@@ -15,7 +15,14 @@ tape('basic encode', function(t) {
     meeeh: 42
   })
 
+  var b3 = Basic.encode({
+    num: 1,
+    payload: 'lol',
+    meeeh: 42
+  })
+
   t.same(b2, b1)
+  t.same(b3, b1)
   t.end()
 })
 

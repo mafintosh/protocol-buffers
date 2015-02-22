@@ -10,6 +10,7 @@ var run = function(name, encode, decode) {
   var EXAMPLE = {
     foo: 'hello',
     hello: 42,
+    payload: new Buffer('a'),
     meh: {
       b: {
         tmp: {
