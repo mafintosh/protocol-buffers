@@ -24,4 +24,5 @@ message Test {
   optional Lol meh = 6;
   optional uint32 hello = 3;
   optional string foo = 1;
+  optional bytes payload = 7;
 }

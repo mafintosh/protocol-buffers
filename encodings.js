@@ -15,18 +15,25 @@ var encoder = function(type, encode, decode, encodingLength) {
 exports.make = encoder
 
 exports.bytes = function(tag) {
+  var bufferLength = function(val) {
+    return Buffer.isBuffer(val) ? val.length : Buffer.byteLength(val)
+  }
+
   var encodingLength = function(val) {
-    return varint.encodingLength(val.length) + val.length
+    var len = bufferLength(val)
+    return varint.encodingLength(len) + len
   }
 
   var encode = function(val, buffer, offset) {
     var oldOffset = offset
+    var len = bufferLength(val)
 
-    varint.encode(val.length, buffer, offset)
+    varint.encode(len, buffer, offset)
     offset += varint.encode.bytes
 
-    val.copy(buffer, offset)
-    offset += val.length
+    if (Buffer.isBuffer(val)) val.copy(buffer, offset)
+    else buffer.write(val, offset, len)
+    offset += len
 
     encode.bytes = offset - oldOffset
     return buffer
