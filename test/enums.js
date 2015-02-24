@@ -1,7 +1,8 @@
 var tape = require('tape')
 var path = require('path')
-var protobuf = require('../require')
-var messages = protobuf('./test.proto')
+var fs = require('fs')
+var protobuf = require('../')
+var messages = protobuf(fs.readFileSync(__dirname + '/test.proto'))
 
 tape('enums', function(t) {
   var e = messages.FOO

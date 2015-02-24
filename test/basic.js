@@ -1,7 +1,8 @@
 var tape = require('tape')
 var path = require('path')
-var protobuf = require('../require')
-var Basic = protobuf('./test.proto').Basic
+var fs = require('fs')
+var protobuf = require('../')
+var Basic = protobuf(fs.readFileSync(__dirname + '/test.proto')).Basic
 
 tape('basic encode', function(t) {
   var b1 = Basic.encode({

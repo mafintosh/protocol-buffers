@@ -1,6 +1,7 @@
 var tape = require('tape')
-var protobuf = require('../require')
-var Defaults = protobuf('./test.proto').Defaults
+var fs = require('fs')
+var protobuf = require('../')
+var Defaults = protobuf(fs.readFileSync(__dirname + '/test.proto')).Defaults
 
 tape('defaults decode', function(t) {
   var o1 = Defaults.decode(new Buffer(0)) // everything default

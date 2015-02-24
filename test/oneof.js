@@ -1,7 +1,8 @@
 var tape = require('tape')
 var path = require('path')
-var protobuf = require('../require')
-var proto = protobuf('./test.proto')
+var fs = require('fs')
+var protobuf = require('../')
+var proto = protobuf(fs.readFileSync(__dirname + '/test.proto'))
 var Property = proto.Property
 var PropertyNoOneof = proto.PropertyNoOneof
 
