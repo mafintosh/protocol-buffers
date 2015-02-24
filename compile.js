@@ -137,20 +137,19 @@ module.exports = function(schema, extraEncodings) {
     })
 
     var oneofMap = {}
-    var oneofs = m.oneof.reduce(function(arr, o){
-      fields = o.fields.map(function(f){
-          oneofMap[f.name] = o.name
-          return {
-            name: f.name,
-            type: f.type,
-            tag: f.tag,
-            required: false,
-            oneof: o.name
-          }
-      }, this)
-      return arr.concat(fields)
-    }, [], this)
-    var hasOneofs = (oneofs.length > 0)
+    var oneofs = []
+    m.oneof.forEach(function(o) {
+      o.fields.forEach(function(f) {
+        oneofMap[f.name] = o.name
+        oneofs.push({
+          name: f.name,
+          type: f.type,
+          tag: f.tag,
+          required: false,
+          oneof: o.name
+        })
+      })
+    })
 
     var fields = m.fields.concat(oneofs)
     var enc = fields.map(function(f) {
@@ -216,15 +215,15 @@ module.exports = function(schema, extraEncodings) {
 
     var encode = genfun()
       ('function encode(obj, buf, offset) {')
-        if (hasOneofs){
+        if (oneofs.length) {
           // build up clean object with only the last field set for each oneof
           encode()
           ('var cleanObj={}, foundOneofs = {}')
           ('var oneofs = %s', JSON.stringify(oneofMap))
           ('for (var f in obj) {')
             ('cleanObj[f] = obj[f]')
-            ('if (oneofs[f] != null) {')
-              ('if (foundOneofs[oneofs[f]] != null) {')
+            ('if (oneofs[f]) {')
+              ('if (foundOneofs[oneofs[f]]) {')
                 ('delete cleanObj[foundOneofs[oneofs[f]]]')
               ('}')
               ('foundOneofs[oneofs[f]] = f')
@@ -342,7 +341,7 @@ module.exports = function(schema, extraEncodings) {
         ('if (!(end <= buf.length && offset <= buf.length)) throw new Error("Decoded message is not valid")')
         ('var oldOffset = offset')
         ('var obj = new Message()')
-        if (hasOneofs){
+        if (oneofs.length) {
           decode()
           ('var oneofs = %s', JSON.stringify(oneofMap))
           ('var foundOneofs = {}')
@@ -386,10 +385,10 @@ module.exports = function(schema, extraEncodings) {
         else {
           decode('%s = enc[%d].decode(buf, offset)', val, i)
           // if a oneof, only keep the last value in the buffer
-          if (hasOneofs && f.oneof != null) {
+          if (oneofs.length && f.oneof) {
             decode('var f = "%s"', f.name)
-            ('if (oneofs[f] != null) {')
-              ('if (foundOneofs[oneofs[f]] != null) {')
+            ('if (oneofs[f]) {')
+              ('if (foundOneofs[oneofs[f]]) {')
                 ('delete obj[foundOneofs[oneofs[f]]]')
               ('}')
               ('foundOneofs[oneofs[f]] = f')
