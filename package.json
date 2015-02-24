@@ -1,6 +1,6 @@
 {
   "name": "protocol-buffers",
-  "version": "2.5.1",
+  "version": "2.6.0",
   "description": "Protocol Buffers for Node.js",
   "repository": {
     "type": "git",
@@ -23,7 +23,9 @@
     "bench": "node bench"
   },
   "browserify": {
-    "transform": ["brfs"]
+    "transform": [
+      "brfs"
+    ]
   },
   "bugs": {
     "url": "https://github.com/mafintosh/protocol-buffers/issues"
