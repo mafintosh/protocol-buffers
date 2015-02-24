@@ -1,7 +1,8 @@
 var tape = require('tape')
 var path = require('path')
-var protobuf = require('../require')
-var Repeated = protobuf('./test.proto').Repeated
+var fs = require('fs')
+var protobuf = require('../')
+var Repeated = protobuf(fs.readFileSync(__dirname + '/test.proto')).Repeated
 
 tape('repeated encode', function(t) {
   var b1 = Repeated.encode({

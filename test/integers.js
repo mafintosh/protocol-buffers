@@ -1,7 +1,8 @@
 var tape = require('tape')
 var path = require('path')
-var protobuf = require('../require')
-var Integers = protobuf('./test.proto').Integers
+var fs = require('fs')
+var protobuf = require('../')
+var Integers = protobuf(fs.readFileSync(__dirname + '/test.proto')).Integers
 
 tape('integers encode + decode', function(t) {
   var b1 = Integers.encode({

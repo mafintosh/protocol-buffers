@@ -15,11 +15,15 @@
     "varint": "^4.0.0"
   },
   "devDependencies": {
+    "brfs": "^1.4.0",
     "tape": "^3.0.3"
   },
   "scripts": {
     "test": "tape test/*.js",
     "bench": "node bench"
+  },
+  "browserify": {
+    "transform": ["brfs"]
   },
   "bugs": {
     "url": "https://github.com/mafintosh/protocol-buffers/issues"
