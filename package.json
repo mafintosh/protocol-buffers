@@ -44,7 +44,10 @@
     "decode",
     "google",
     "serialize",
-    "parse"
+    "parse",
+    "levelup",
+    "encodings",
+    "encoding"
   ],
   "author": "Mathias Buus",
   "license": "MIT"
