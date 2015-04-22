@@ -1,7 +1,6 @@
 var schema = require('protobuf-schema')
 var compile = require('./compile')
 
-
 module.exports = function(proto, opts) {
   if (!opts) opts = {}
   if (!proto) throw new Error('Pass in a .proto string or a protobuf-schema parsed object')
