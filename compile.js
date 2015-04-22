@@ -128,13 +128,17 @@ module.exports = function(schema, extraEncodings) {
   }
 
   var compileMessage = function(m, exports) {
+    m.messages.forEach(function (nested) {
+      exports[nested.name] = resolve(nested.name, m.id)
+    })
+
+    m.enums.forEach(function( val ) {
+      exports[val.name] = val.values
+    })
+
     exports.type = 2
     exports.message = true
     exports.name = m.name
-
-    m.enums.forEach(function( val ) {
-      exports[ val.name ] = val.values
-    })
 
     var oneofMap = {}
     var oneofs = []
@@ -417,6 +421,7 @@ module.exports = function(schema, extraEncodings) {
       skip: skip,
       enc: enc
     })
+
 
     // end of compilation - return all the things
 
