@@ -140,28 +140,20 @@ module.exports = function(schema, extraEncodings) {
     exports.message = true
     exports.name = m.name
 
-    var oneofMap = {}
-    var oneofs = []
-    m.oneof.forEach(function(o) {
-      o.fields.forEach(function(f) {
-        oneofMap[f.name] = o.name
-        oneofs.push({
-          name: f.name,
-          type: f.type,
-          tag: f.tag,
-          required: false,
-          oneof: o.name
-        })
-      })
+    var oneofs = {}
+
+    m.fields.forEach(function (f) {
+      if (!f.oneof) return
+      if (!oneofs[f.oneof]) oneofs[f.oneof] = []
+      oneofs[f.oneof].push(f.name)
     })
 
-    var fields = m.fields.concat(oneofs)
-    var enc = fields.map(function(f) {
+    var enc = m.fields.map(function(f) {
       return resolve(f.type, m.id)
     })
 
     var forEach = function(fn) {
-      for (var i = 0; i < enc.length; i++) fn(enc[i], fields[i], genobj('obj', fields[i].name), i)
+      for (var i = 0; i < enc.length; i++) fn(enc[i], m.fields[i], genobj('obj', m.fields[i].name), i)
     }
 
     // compile encodingLength
@@ -169,6 +161,17 @@ module.exports = function(schema, extraEncodings) {
     var encodingLength = genfun()
       ('function encodingLength(obj) {')
         ('var length = 0')
+
+    Object.keys(oneofs).forEach(function (name) {
+      var msg = JSON.stringify('only one of the properties defined in oneof ' + name + ' can be set')
+      var cnt = oneofs[name]
+        .map(function (prop) {
+          return '+defined(' + genobj('obj', prop) + ')'
+        })
+        .join(' + ')
+
+      encodingLength('if ((%s) > 1) throw new Error(%s)', cnt, msg)
+    })
 
     forEach(function(e, f, val, i) {
       var packed = f.repeated && f.options && f.options.packed
@@ -184,8 +187,10 @@ module.exports = function(schema, extraEncodings) {
             ('if (!defined(%s)) continue', val+'[i]')
             ('var len = enc[%d].encodingLength(%s)', i, val+'[i]')
             ('packedLen += len')
-            if (e.message) encodingLength('packedLen += varint.encodingLength(len)')
-          encodingLength('}')
+
+        if (e.message) encodingLength('packedLen += varint.encodingLength(len)')
+
+        encodingLength('}')
           ('if (packedLen) {')
             ('length += %d + packedLen + varint.encodingLength(packedLen)', hl)
           ('}')
@@ -219,26 +224,21 @@ module.exports = function(schema, extraEncodings) {
 
     var encode = genfun()
       ('function encode(obj, buf, offset) {')
-        if (oneofs.length) {
-          // build up clean object with only the last field set for each oneof
-          encode()
-          ('var cleanObj={}, foundOneofs = {}')
-          ('var oneofs = %s', JSON.stringify(oneofMap))
-          ('for (var f in obj) {')
-            ('cleanObj[f] = obj[f]')
-            ('if (oneofs[f]) {')
-              ('if (foundOneofs[oneofs[f]]) {')
-                ('delete cleanObj[foundOneofs[oneofs[f]]]')
-              ('}')
-              ('foundOneofs[oneofs[f]] = f')
-            ('}')
-          ('}')
-          ('obj = cleanObj')
-        }
-        encode()
         ('if (!offset) offset = 0')
         ('if (!buf) buf = new Buffer(encodingLength(obj))')
         ('var oldOffset = offset')
+
+
+    Object.keys(oneofs).forEach(function (name) {
+      var msg = JSON.stringify('only one of the properties defined in oneof ' + name + ' can be set')
+      var cnt = oneofs[name]
+        .map(function (prop) {
+          return '+defined(' + genobj('obj', prop) + ')'
+        })
+        .join(' + ')
+
+      encode('if ((%s) > 1) throw new Error(%s)', cnt, msg)
+    })
 
     forEach(function(e, f, val, i) {
       if (f.required) encode('if (!defined(%s)) throw new Error(%s)', val, JSON.stringify(f.name+' is required'))
@@ -316,8 +316,7 @@ module.exports = function(schema, extraEncodings) {
         return
       }
 
-      // only set defaults if not a oneof
-      if (f.oneof == null) {
+      if (!f.oneof) {
         Message('%s = %s', genobj('this', f.name), defaultValue(f, def))
       }
     })
@@ -345,11 +344,6 @@ module.exports = function(schema, extraEncodings) {
         ('if (!(end <= buf.length && offset <= buf.length)) throw new Error("Decoded message is not valid")')
         ('var oldOffset = offset')
         ('var obj = new Message()')
-        if (oneofs.length) {
-          decode()
-          ('var oneofs = %s', JSON.stringify(oneofMap))
-          ('var foundOneofs = {}')
-        }
 
     forEach(function(e, f, val, i) {
       if (f.required) decode('var found%d = false', i)
@@ -371,6 +365,14 @@ module.exports = function(schema, extraEncodings) {
 
       decode('case %d:', f.tag)
 
+      if (f.oneof) {
+        m.fields.forEach(function (otherField) {
+          if (otherField.oneof === f.oneof && f.name !== otherField.name) {
+            decode('delete %s', genobj('obj', otherField.name))
+          }
+        })
+      }
+
       if (packed) {
         decode()
           ('var packedEnd = varint.decode(buf, offset)')
@@ -388,16 +390,6 @@ module.exports = function(schema, extraEncodings) {
         if (f.repeated) decode('%s.push(enc[%d].decode(buf, offset))', val, i)
         else {
           decode('%s = enc[%d].decode(buf, offset)', val, i)
-          // if a oneof, only keep the last value in the buffer
-          if (oneofs.length && f.oneof) {
-            decode('var f = "%s"', f.name)
-            ('if (oneofs[f]) {')
-              ('if (foundOneofs[oneofs[f]]) {')
-                ('delete obj[foundOneofs[oneofs[f]]]')
-              ('}')
-              ('foundOneofs[oneofs[f]] = f')
-            ('}')
-          }
         }
       }
 

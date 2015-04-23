@@ -58,9 +58,9 @@ enum FOO_HEX {
 message Property {
   required string name = 1;
   optional string desc = 2;
-  
+
   oneof value {
-    bool bool_value  = 3;
+    bool bool_value = 3;
     float float_value = 4;
     int32 int_value = 5;
     string string_value = 6;
@@ -79,7 +79,7 @@ message PropertyNoOneof {
 
 message ComplexProperty {
   required string name = 1;
-  
+
   oneof value {
     bool bool_value  = 3;
     float float_value = 4;

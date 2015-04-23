@@ -24,7 +24,7 @@ tape('oneof encode + decode', function(t) {
   t.end()
 })
 
-tape('oneof encode + decode of overloaded oneof json', function(t) {
+tape('oneof encode of overloaded json throws', function(t) {
   var invalidData = {
     name: 'Foo',
     desc: 'optional description',
@@ -32,10 +32,12 @@ tape('oneof encode + decode of overloaded oneof json', function(t) {
     bool_value:  true,  // ignored
     int_value: 12345 // retained, was last entered
   }
-  var buf = Property.encode(invalidData);
-  var out = Property.decode(buf)
-  t.deepEqual(data, out)
-  t.end()
+  try {
+    Property.encode(invalidData);
+  } catch (err) {
+    t.ok(true, 'should throw')
+    t.end()
+  }
 })
 
 tape('oneof encode + decode of overloaded oneof buffer', function(t) {
