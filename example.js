@@ -1,6 +1,7 @@
-var protobuf = require('./require')
+var protobuf = require('./')
+var fs = require('fs')
 
-var messages = protobuf('./example.proto')
+var messages = protobuf(fs.readFileSync(__dirname + '/example.proto'))
 
 var ex = {
   foo: 'hello world',
