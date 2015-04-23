@@ -40,6 +40,7 @@ var isString = function(def) {
 }
 
 var defaultValue = function(f, def) {
+  if (f.map) return '{}'
   if (f.repeated) return '[]'
 
   switch (f.type) {
@@ -86,6 +87,38 @@ module.exports = function(schema, extraEncodings) {
       schema.messages.forEach(function(m) {
         m.id = prefix + (prefix ? '.' : '')+m.name
         messages[m.id] = m
+        m.fields.forEach(function (f) {
+          if (!f.map) return
+
+          var name = 'Map_' + f.map.from + '_' + f.map.to
+          var map = {
+            name: name,
+            enums: [],
+            messages: [],
+            fields: [{
+              name: 'key',
+              type: f.map.from,
+              tag: 1,
+              repeated: false,
+              required: true
+            }, {
+              name: 'value',
+              type: f.map.to,
+              tag: 2,
+              repeated: false,
+              required: false
+            }],
+            extensions: null,
+            id: prefix + (prefix ? '.' : '')+name
+          }
+
+          if (!messages[map.id]) {
+            messages[map.id] = map
+            schema.messages.push(map)
+          }
+          f.type = name
+          f.repeated = true
+        })
         visit(m, m.id)
       })
     }
@@ -180,6 +213,15 @@ module.exports = function(schema, extraEncodings) {
       if (f.required) encodingLength('if (!defined(%s)) throw new Error(%s)', val, JSON.stringify(f.name+' is required'))
       else encodingLength('if (defined(%s)) {', val)
 
+      if (f.map) {
+        encodingLength()
+          ('var tmp = Object.keys(%s)', val)
+          ('for (var i = 0; i < tmp.length; i++) {')
+            ('tmp[i] = {key: tmp[i], value: %s[tmp[i]]}', val)
+          ('}')
+        val = 'tmp'
+      }
+
       if (packed) {
         encodingLength()
           ('var packedLen = 0')
@@ -247,6 +289,15 @@ module.exports = function(schema, extraEncodings) {
       var packed = f.repeated && f.options && f.options.packed
       var p = varint.encode(f.tag << 3 | 2)
       var h = varint.encode(f.tag << 3 | e.type)
+
+      if (f.map) {
+        encode()
+          ('var tmp = Object.keys(%s)', val)
+          ('for (var i = 0; i < tmp.length; i++) {')
+            ('tmp[i] = {key: tmp[i], value: %s[tmp[i]]}', val)
+          ('}')
+        val = 'tmp'
+      }
 
       if (packed) {
         encode()
@@ -384,11 +435,18 @@ module.exports = function(schema, extraEncodings) {
       if (e.message) {
         decode('var len = varint.decode(buf, offset)')
         decode('offset += varint.decode.bytes')
-        if (f.repeated) decode('%s.push(enc[%d].decode(buf, offset, offset + len))', val, i)
-        else decode('%s = enc[%d].decode(buf, offset, offset + len)', val, i)
+        if (f.map) {
+          decode('var tmp = enc[%d].decode(buf, offset, offset + len)', i)
+          decode('%s[tmp.key] = tmp.value', val)
+        } else if (f.repeated) {
+          decode('%s.push(enc[%d].decode(buf, offset, offset + len))', val, i)
+        } else {
+          decode('%s = enc[%d].decode(buf, offset, offset + len)', val, i)
+        }
       } else {
-        if (f.repeated) decode('%s.push(enc[%d].decode(buf, offset))', val, i)
-        else {
+        if (f.repeated) {
+          decode('%s.push(enc[%d].decode(buf, offset))', val, i)
+        } else {
           decode('%s = enc[%d].decode(buf, offset)', val, i)
         }
       }

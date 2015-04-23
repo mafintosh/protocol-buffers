@@ -9,7 +9,7 @@
   "dependencies": {
     "generate-function": "^2.0.0",
     "generate-object-property": "^1.1.0",
-    "protocol-buffers-schema": "^1.5.0",
+    "protocol-buffers-schema": "^2.0.1",
     "signed-varint": "^2.0.0",
     "varint": "^4.0.0"
   },

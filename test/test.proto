@@ -3,6 +3,10 @@ message Basic {
   required bytes payload = 2;
 }
 
+message Map {
+  map<string, string> foo = 1;
+}
+
 message UTF8 {
   required string foo = 1;
   required uint32 bar = 2;
