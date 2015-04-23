@@ -13,7 +13,7 @@ npm install protocol-buffers
 
 Assuming the following `test.proto` file exists
 
-```
+```proto
 enum FOO {
   BAR = 1;
 }
