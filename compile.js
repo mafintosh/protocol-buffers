@@ -347,34 +347,6 @@ module.exports = function(schema, extraEncodings) {
       Buffer: Buffer
     })
 
-    // compile proto
-
-    var Message = genfun()
-
-    Message('function Message() {')
-    forEach(function(e, f) {
-      var def = f.options && f.options.default
-      var resolved = resolve(f.type, m.id, false)
-      var vals = resolved && resolved.values
-
-      if (vals) { // is enum
-        if (f.repeated) {
-          Message('%s = []', genobj('this', f.name))
-        } else {
-          def = (def && def in vals) ? vals[def] : vals[Object.keys(vals)[0]]
-          Message('%s = %s', genobj('this', f.name), ''+parseInt(def || 0))
-        }
-        return
-      }
-
-      if (!f.oneof) {
-        Message('%s = %s', genobj('this', f.name), defaultValue(f, def))
-      }
-    })
-    Message('}')
-
-    Message = Message.toFunction()
-
     // compile decode
 
     var invalid = m.fields
@@ -388,13 +360,41 @@ module.exports = function(schema, extraEncodings) {
 
     var decode = genfun()
 
+    var objectKeys = []
+    forEach(function(e, f) {
+      var def = f.options && f.options.default
+      var resolved = resolve(f.type, m.id, false)
+      var vals = resolved && resolved.values
+
+      if (vals) { // is enum
+        if (f.repeated) {
+          objectKeys.push(genobj.property(f.name) + ': []')
+        } else {
+          def = (def && def in vals) ? vals[def] : vals[Object.keys(vals)[0]]
+          objectKeys.push(genobj.property(f.name) + ': ' + parseInt(def || 0))
+        }
+        return
+      }
+
+      if (!f.oneof) {
+        objectKeys.push(genobj.property(f.name) + ': ' + defaultValue(f, def))
+      }
+    })
+
+
     decode()
       ('function decode(buf, offset, end) {')
         ('if (!offset) offset = 0')
         ('if (!end) end = buf.length')
         ('if (!(end <= buf.length && offset <= buf.length)) throw new Error("Decoded message is not valid")')
         ('var oldOffset = offset')
-        ('var obj = new Message()')
+        ('var obj = {')
+
+    objectKeys.forEach(function (prop, i) {
+      decode(prop + (i === objectKeys.length - 1 ? '' : ','))
+    })
+
+    decode('}')
 
     forEach(function(e, f, val, i) {
       if (f.required) decode('var found%d = false', i)
@@ -466,12 +466,10 @@ module.exports = function(schema, extraEncodings) {
     ('}')
 
     decode = decode.toFunction({
-      Message: Message,
       varint: varint,
       skip: skip,
       enc: enc
     })
-
 
     // end of compilation - return all the things
 

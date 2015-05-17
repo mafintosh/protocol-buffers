@@ -1,5 +1,6 @@
-var protobuf = require('../require')
-var messages = protobuf('./bench.proto')
+var protobuf = require('../')
+var fs = require('fs')
+var messages = protobuf(fs.readFileSync(__dirname + '/bench.proto'))
 
 var TIMES = 1000000
 
