@@ -11,10 +11,10 @@
     "generate-object-property": "^1.2.0",
     "protocol-buffers-schema": "^2.0.1",
     "signed-varint": "^2.0.0",
+    "brfs": "^1.4.0",
     "varint": "^4.0.0"
   },
   "devDependencies": {
-    "brfs": "^1.4.0",
     "tape": "^3.0.3"
   },
   "scripts": {
