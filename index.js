@@ -20,7 +20,7 @@ module.exports = function (proto, opts) {
   var Messages = function () {
     var self = this
 
-    compile(sch, opts.encodings || {}).forEach(function (m) {
+    compile(sch, opts.encodings || {}, opts.defaultNull).forEach(function (m) {
       self[m.name] = flatten(m.values) || m
     })
   }

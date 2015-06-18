@@ -50,17 +50,17 @@ var isString = function (def) {
   }
 }
 
-var defaultValue = function (f, def) {
+var defaultValue = function (f, def, defaultNull) {
   if (f.map) return '{}'
   if (f.repeated) return '[]'
 
   switch (f.type) {
     case 'string':
-      return isString(def) ? def : '""'
+    return isString(def) ? def : (defaultNull ? 'null' : '""')
 
     case 'bool':
-      if (def === 'true') return 'true'
-      return 'false'
+    if (def === 'true' || def === 'false') return def
+    return defaultNull ? 'null' : 'false'
 
     case 'float':
     case 'double':
@@ -74,14 +74,16 @@ var defaultValue = function (f, def) {
     case 'int32':
     case 'sint64':
     case 'sint32':
-      return '' + Number(def || 0)
+    var number = Number(def)
+    if (def === '' || isNaN(number)) return defaultNull ? 'null' : '0'
+    return String(number)
 
     default:
-      return 'null'
+    return 'null'
   }
 }
 
-module.exports = function (schema, extraEncodings) {
+module.exports = function (schema, extraEncodings, defaultNull) {
   var messages = {}
   var enums = {}
   var cache = {}
@@ -387,7 +389,8 @@ module.exports = function (schema, extraEncodings) {
         return
       }
 
-      objectKeys.push(genobj.property(f.name) + ': ' + defaultValue(f, def))
+      var value = defaultValue(f, def, defaultNull);
+      objectKeys.push(genobj.property(f.name) + ': ' + value)
     })
 
     decode()
