@@ -124,7 +124,7 @@ module.exports = function(schema, extraEncodings) {
     }
   }
 
-  visit(schema, '')
+  visit(schema, schema.package !== null ? schema.package : '')
 
   var compileEnum = function(e) {
     var conditions = Object.keys(e.values)

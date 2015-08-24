@@ -30,7 +30,7 @@ module.exports = function(proto, opts) {
     var sch = (typeof proto === 'object' && !Buffer.isBuffer(proto)) ? proto : schema.parse(proto)
     sch.imports.forEach(function(filename) {
       if (importedFiles.hasOwnProperty(filename)) return
-      if (typeof opts.resolveImport !== 'function') throw new Error('.proto requires import, but resolveImport did not implemented.')
+      if (typeof opts.resolveImport !== 'function') throw new Error('.proto requires import, but resolveImport function not provided.')
       processImport(opts.resolveImport(filename), true)
       importedFiles[filename] = 1
     })
