@@ -28,7 +28,7 @@ var skip = function(type, buffer, offset) {
 }
 
 var defined = function(val) {
-  return val !== null && val !== undefined
+  return val !== null && val !== undefined && (typeof val !== "number" || !isNaN(val))
 }
 
 var isString = function(def) {
