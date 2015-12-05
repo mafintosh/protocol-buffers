@@ -63,7 +63,7 @@ var defaultValue = function(f, def) {
     case 'int32':
     case 'sint64':
     case 'sint32':
-    return ''+parseInt(def || 0)
+    return ''+Number(def || 0)
 
     default:
     return 'null'
