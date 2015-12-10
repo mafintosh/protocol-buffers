@@ -124,7 +124,7 @@ module.exports = function(schema, extraEncodings) {
     }
   }
 
-  visit(schema, '')
+  visit(schema, schema.package !== null ? schema.package : '')
 
   var compileEnum = function(e) {
     var conditions = Object.keys(e.values)
@@ -484,7 +484,6 @@ module.exports = function(schema, extraEncodings) {
   }
 
   var resolve = function(name, from, compile) {
-    if (extraEncodings && extraEncodings[name]) return extraEncodings[name]
     if (encodings[name]) return encodings[name]
 
     var m = (from ? from+'.'+name : name).split('.')
@@ -493,7 +492,7 @@ module.exports = function(schema, extraEncodings) {
       })
       .reverse()
       .reduce(function(result, id) {
-        return result || messages[id] || enums[id]
+        return result || messages[id] || enums[id] || extraEncodings[id]
       }, null)
 
     if (compile === false) return m
