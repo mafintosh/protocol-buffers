@@ -7,7 +7,7 @@ var TIMES = 1000000
 var then = 0
 var diff = 0
 
-var run = function(name, encode, decode) {
+var run = function (name, encode, decode) {
   var EXAMPLE = {
     foo: 'hello',
     hello: 42,
@@ -23,12 +23,13 @@ var run = function(name, encode, decode) {
   }
 
   var EXAMPLE_BUFFER = encode(EXAMPLE)
+  var i
 
   console.log('Benchmarking %s', name)
   console.log('  Running object encoding benchmark...')
 
   then = Date.now()
-  for (var i = 0; i < TIMES; i++) {
+  for (i = 0; i < TIMES; i++) {
     encode(EXAMPLE)
   }
   diff = Date.now() - then
@@ -38,7 +39,7 @@ var run = function(name, encode, decode) {
   console.log('  Running object decoding benchmark...')
 
   then = Date.now()
-  for (var i = 0; i < TIMES; i++) {
+  for (i = 0; i < TIMES; i++) {
     decode(EXAMPLE_BUFFER)
   }
   diff = Date.now() - then
@@ -48,7 +49,7 @@ var run = function(name, encode, decode) {
   console.log('  Running object encoding+decoding benchmark...')
 
   then = Date.now()
-  for (var i = 0; i < TIMES; i++) {
+  for (i = 0; i < TIMES; i++) {
     decode(encode(EXAMPLE))
   }
   diff = Date.now() - then

@@ -1,10 +1,9 @@
 var tape = require('tape')
-var path = require('path')
 var fs = require('fs')
 var protobuf = require('../')
 var Map = protobuf(fs.readFileSync(__dirname + '/test.proto')).Map
 
-tape('map encode + decode', function(t) {
+tape('map encode + decode', function (t) {
   var b1 = Map.encode({
     foo: {
       hello: 'world'

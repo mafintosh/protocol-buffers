@@ -3,7 +3,7 @@ var fs = require('fs')
 var protobuf = require('../')
 var Defaults = protobuf(fs.readFileSync(__dirname + '/test.proto')).Defaults
 
-tape('defaults decode', function(t) {
+tape('defaults decode', function (t) {
   var o1 = Defaults.decode(new Buffer(0)) // everything default
 
   var b2 = Defaults.encode({
@@ -27,7 +27,7 @@ tape('defaults decode', function(t) {
     num: 42,
     foo1: 2,
     foo2: 1,
-    foos: [],
+    foos: []
   }, 'all defaults')
 
   t.same(Defaults.decode(b2), {

@@ -1,10 +1,9 @@
 var tape = require('tape')
-var path = require('path')
 var fs = require('fs')
 var protobuf = require('../')
 var Repeated = protobuf(fs.readFileSync(__dirname + '/test.proto')).Repeated
 
-tape('repeated encode', function(t) {
+tape('repeated encode', function (t) {
   var b1 = Repeated.encode({
     list: [{
       num: 1,
@@ -31,7 +30,7 @@ tape('repeated encode', function(t) {
   t.end()
 })
 
-tape('repeated encode + decode', function(t) {
+tape('repeated encode + decode', function (t) {
   var b1 = Repeated.encode({
     list: [{
       num: 1,
@@ -62,7 +61,7 @@ tape('repeated encode + decode', function(t) {
     meeh: 42
   })
 
-  var o2 = Repeated.decode(b1)
+  var o2 = Repeated.decode(b2)
 
   t.same(o2, o1)
   t.end()

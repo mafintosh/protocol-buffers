@@ -1,10 +1,9 @@
 var tape = require('tape')
-var path = require('path')
 var fs = require('fs')
 var protobuf = require('../')
 var Nested = protobuf(fs.readFileSync(__dirname + '/test.proto')).Nested
 
-tape('nested encode', function(t) {
+tape('nested encode', function (t) {
   var b1 = Nested.encode({
     num: 1,
     payload: new Buffer('lol'),
@@ -28,7 +27,7 @@ tape('nested encode', function(t) {
   t.end()
 })
 
-tape('nested encode + decode', function(t) {
+tape('nested encode + decode', function (t) {
   var b1 = Nested.encode({
     num: 1,
     payload: new Buffer('lol'),
@@ -54,9 +53,9 @@ tape('nested encode + decode', function(t) {
       num: 2,
       payload: new Buffer('bar')
     }
-  });
+  })
 
-  var o2 = Nested.decode(b1)
+  var o2 = Nested.decode(b2)
 
   t.same(o2, o1)
   t.end()

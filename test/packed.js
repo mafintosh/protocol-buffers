@@ -1,10 +1,9 @@
 var tape = require('tape')
-var path = require('path')
 var fs = require('fs')
 var protobuf = require('../')
 var Packed = protobuf(fs.readFileSync(__dirname + '/test.proto')).Packed
 
-tape('Packed encode', function(t) {
+tape('Packed encode', function (t) {
   var b1 = Packed.encode({
     packed: [
       'hello world',
@@ -26,7 +25,7 @@ tape('Packed encode', function(t) {
   t.end()
 })
 
-tape('Packed encode + decode', function(t) {
+tape('Packed encode + decode', function (t) {
   var b1 = Packed.encode({
     packed: [
       'hello world',
@@ -51,14 +50,13 @@ tape('Packed encode + decode', function(t) {
     meeh: 42
   })
 
-  var o2 = Packed.decode(b1)
+  var o2 = Packed.decode(b2)
 
   t.same(o2, o1)
   t.end()
 })
 
-
-tape('packed message encode', function(t) {
+tape('packed message encode', function (t) {
   var b1 = Packed.encode({
     list: [{
       num: 1,
@@ -85,7 +83,7 @@ tape('packed message encode', function(t) {
   t.end()
 })
 
-tape('packed message encode + decode', function(t) {
+tape('packed message encode + decode', function (t) {
   var b1 = Packed.encode({
     list: [{
       num: 1,
@@ -116,7 +114,7 @@ tape('packed message encode + decode', function(t) {
     meeh: 42
   })
 
-  var o2 = Packed.decode(b1)
+  var o2 = Packed.decode(b2)
 
   t.same(o2, o1)
   t.end()
