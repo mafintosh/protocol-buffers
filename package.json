@@ -19,7 +19,7 @@
     "tape": "^3.0.3"
   },
   "scripts": {
-    "test": "tape test/*.js && standard",
+    "test": "standard && tape test/*.js",
     "bench": "node bench"
   },
   "browserify": {

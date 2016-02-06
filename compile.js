@@ -138,7 +138,7 @@ module.exports = function (schema, extraEncodings) {
     if (!conditions) conditions = 'true'
 
     var encode = genfun()
-      ('function encode(val, buf, offset) {')
+      ('function encode (val, buf, offset) {')
         ('if (%s) throw new Error("Invalid enum value: "+val)', conditions)
         ('varint.encode(val, buf, offset)')
         ('encode.bytes = varint.encode.bytes')
@@ -149,7 +149,7 @@ module.exports = function (schema, extraEncodings) {
       })
 
     var decode = genfun()
-      ('function decode(buf, offset) {')
+      ('function decode (buf, offset) {')
         ('var val = varint.decode(buf, offset)')
         ('if (%s) throw new Error("Invalid enum value: "+val)', conditions)
         ('decode.bytes = varint.decode.bytes')
@@ -194,7 +194,7 @@ module.exports = function (schema, extraEncodings) {
     // compile encodingLength
 
     var encodingLength = genfun()
-      ('function encodingLength(obj) {')
+      ('function encodingLength (obj) {')
         ('var length = 0')
 
     Object.keys(oneofs).forEach(function (name) {
@@ -267,7 +267,7 @@ module.exports = function (schema, extraEncodings) {
     // compile encode
 
     var encode = genfun()
-      ('function encode(obj, buf, offset) {')
+      ('function encode (obj, buf, offset) {')
         ('if (!offset) offset = 0')
         ('if (!buf) buf = new Buffer(encodingLength(obj))')
         ('var oldOffset = offset')
@@ -384,7 +384,7 @@ module.exports = function (schema, extraEncodings) {
     })
 
     decode()
-      ('function decode(buf, offset, end) {')
+      ('function decode (buf, offset, end) {')
         ('if (!offset) offset = 0')
         ('if (!end) end = buf.length')
         ('if (!(end <= buf.length && offset <= buf.length)) throw new Error("Decoded message is not valid")')
