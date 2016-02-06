@@ -15,10 +15,11 @@
     "varint": "^4.0.0"
   },
   "devDependencies": {
+    "standard": "^5.4.1",
     "tape": "^3.0.3"
   },
   "scripts": {
-    "test": "tape test/*.js",
+    "test": "tape test/*.js && standard",
     "bench": "node bench"
   },
   "browserify": {

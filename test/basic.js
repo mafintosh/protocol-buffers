@@ -1,10 +1,9 @@
 var tape = require('tape')
-var path = require('path')
 var fs = require('fs')
 var protobuf = require('../')
 var Basic = protobuf(fs.readFileSync(__dirname + '/test.proto')).Basic
 
-tape('basic encode', function(t) {
+tape('basic encode', function (t) {
   var b1 = Basic.encode({
     num: 1,
     payload: new Buffer('lol')
@@ -27,7 +26,7 @@ tape('basic encode', function(t) {
   t.end()
 })
 
-tape('basic encode + decode', function(t) {
+tape('basic encode + decode', function (t) {
   var b1 = Basic.encode({
     num: 1,
     payload: new Buffer('lol')
@@ -44,13 +43,13 @@ tape('basic encode + decode', function(t) {
     meeeh: 42
   })
 
-  var o2 = Basic.decode(b1)
+  var o2 = Basic.decode(b2)
 
   t.same(o2, o1)
   t.end()
 })
 
-tape('basic encode + decode floats', function(t) {
+tape('basic encode + decode floats', function (t) {
   var b1 = Basic.encode({
     num: 1.1,
     payload: new Buffer('lol')
