@@ -209,7 +209,7 @@ module.exports = function (schema, extraEncodings) {
     })
 
     forEach(function (e, f, val, i) {
-      var packed = f.repeated && f.options && f.options.packed
+      var packed = f.repeated && f.options && f.options.packed && f.options.packed !== 'false'
       var hl = varint.encodingLength(f.tag << 3 | e.type)
 
       if (f.required) encodingLength('if (!defined(%s)) throw new Error(%s)', val, JSON.stringify(f.name + ' is required'))
@@ -287,7 +287,7 @@ module.exports = function (schema, extraEncodings) {
       if (f.required) encode('if (!defined(%s)) throw new Error(%s)', val, JSON.stringify(f.name + ' is required'))
       else encode('if (defined(%s)) {', val)
 
-      var packed = f.repeated && f.options && f.options.packed
+      var packed = f.repeated && f.options && f.options.packed && f.options.packed !== 'false'
       var p = varint.encode(f.tag << 3 | 2)
       var h = varint.encode(f.tag << 3 | e.type)
       var j
@@ -413,7 +413,7 @@ module.exports = function (schema, extraEncodings) {
       ('switch (tag) {')
 
     forEach(function (e, f, val, i) {
-      var packed = f.repeated && f.options && f.options.packed
+      var packed = f.repeated && f.options && f.options.packed && f.options.packed !== 'false'
 
       decode('case %d:', f.tag)
 
