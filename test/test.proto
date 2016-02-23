@@ -41,6 +41,15 @@ message Packed {
   repeated string packed = 2 [packed=true];
 }
 
+message NotPacked {
+  repeated int64 id = 2;
+  optional int64 value = 5;
+}
+message FalsePacked {
+  repeated int64 id = 2 [packed=false];
+  optional int64 value = 5;
+}
+
 enum FOO {
   A = 1;
   B = 2;
