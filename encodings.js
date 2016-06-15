@@ -1,5 +1,6 @@
 var varint = require('varint')
 var svarint = require('signed-varint')
+var ByteBuffer = require('bytebuffer')
 
 var encoder = function (type, encode, decode, encodingLength) {
   encode.bytes = decode.bytes = 0
@@ -133,38 +134,21 @@ exports.int32 = (function () {
 
 exports.int64 = (function () {
   var decode = function (buffer, offset) {
-    var val = varint.decode(buffer, offset)
-    if (val >= Math.pow(2, 63)) {
-      var limit = 9
-      while (buffer[offset + limit - 1] === 0xff) limit--
-      limit = limit || 9
-      var subset = new Buffer(limit)
-      buffer.copy(subset, 0, offset, offset + limit)
-      subset[limit - 1] = subset[limit - 1] & 0x7f
-      val = -1 * varint.decode(subset, 0)
-      decode.bytes = 10
-    } else {
-      decode.bytes = varint.decode.bytes
-    }
-    return val
+    var res = ByteBuffer.prototype.readVarint64.call({
+      buffer: buffer,
+      noAssert: true,
+      offset: 0
+    }, offset)
+    decode.bytes = res.length
+    return res.value.toString()
   }
 
   var encode = function (val, buffer, offset) {
-    if (val < 0) {
-      var last = offset + 9
-      varint.encode(val * -1, buffer, offset)
-      offset += varint.encode.bytes - 1
-      buffer[offset] = buffer[offset] | 0x80
-      while (offset < last - 1) {
-        offset++
-        buffer[offset] = 0xff
-      }
-      buffer[last] = 0x01
-      encode.bytes = 10
-    } else {
-      varint.encode(val, buffer, offset)
-      encode.bytes = varint.encode.bytes
-    }
+    encode.bytes = ByteBuffer.prototype.writeVarint64.call({
+      buffer: buffer,
+      noAssert: true,
+      offset: 0
+    }, val, offset)
     return buffer
   }
 
