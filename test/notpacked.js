@@ -13,7 +13,7 @@ tape('NotPacked encode + FalsePacked decode', function (t) {
   var o1 = FalsePacked.decode(b1)
 
   t.same(o1.id.length, 1)
-  t.same(o1.id[0], 9847136125)
+  t.same(o1.id[0], '9847136125')
 
   t.end()
 })
@@ -27,7 +27,7 @@ tape('FalsePacked encode + NotPacked decode', function (t) {
   var o1 = NotPacked.decode(b1)
 
   t.same(o1.id.length, 1)
-  t.same(o1.id[0], 9847136125)
+  t.same(o1.id[0], '9847136125')
 
   t.end()
 })

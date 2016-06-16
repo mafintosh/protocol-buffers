@@ -9,7 +9,7 @@ tape('integers encode + decode', function (t) {
     sint64: 2,
     int32: 3,
     uint32: 4,
-    int64: 5
+    int64: '5'
   })
 
   var o1 = Integers.decode(b1)
@@ -19,7 +19,7 @@ tape('integers encode + decode', function (t) {
     sint64: 2,
     int32: 3,
     uint32: 4,
-    int64: 5
+    int64: '5'
   })
 
   t.end()
@@ -31,7 +31,7 @@ tape('integers encode + decode + negative', function (t) {
     sint64: -2,
     int32: -3,
     uint32: 0,
-    int64: -1 * Math.pow(2, 52) - 5
+    int64: '' + (-1 * Math.pow(2, 52) - 5)
   })
 
   var o1 = Integers.decode(b1)
@@ -41,8 +41,32 @@ tape('integers encode + decode + negative', function (t) {
     sint64: -2,
     int32: -3,
     uint32: 0,
-    int64: -1 * Math.pow(2, 52) - 5
+    int64: '' + (-1 * Math.pow(2, 52) - 5)
   })
+
+  t.end()
+})
+
+tape('int64 string encode + decode', function (t) {
+  var b1 = Integers.encode({
+    int64: '4611686018427388001'
+  })
+
+  var o1 = Integers.decode(b1)
+
+  t.same(o1.int64, '4611686018427388001')
+
+  t.end()
+})
+
+tape('int64 string encode + decode + negative', function (t) {
+  var b1 = Integers.encode({
+    int64: '-4611686018427388001'
+  })
+
+  var o1 = Integers.decode(b1)
+
+  t.same(o1.int64, '-4611686018427388001')
 
   t.end()
 })
