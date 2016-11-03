@@ -14,6 +14,10 @@ var protoStr = 'enum AbcType {\n' +
   '  required uint32 api_version = 8;\n' +
   '  optional AbcAcknowledgeConfirmationToken ack_confirmation_token = 1;\n' +
   '  extensions 1000 to max;\n' +
+  '}\n' +
+  'message Open {\n' +
+  '  required bytes feed = 1;\n' +
+  '  required bytes nonce = 2;\n' +
   '}'
 
 var messages = protobuf(protoStr)
@@ -34,6 +38,18 @@ tape('non buffers should fail', function (t) {
   try {
     messages.ABC.decode({})
   } catch (e) {
+    didFail = true
+  }
+  t.same(didFail, true, 'bad input')
+  t.end()
+})
+
+tape('protocol parser test case', function (t) {
+  var didFail = false
+  var buf = new Buffer('cec1', 'hex')
+  try {
+    messages.Open.decode(buf)
+  } catch (err) {
     didFail = true
   }
   t.same(didFail, true, 'bad input')
