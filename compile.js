@@ -8,14 +8,14 @@ var genfun = require('generate-function')
 var skip = function (type, buffer, offset) {
   switch (type) {
     case 0:
-      decodeVarint(buffer, offset)
+      varint.decode(buffer, offset)
       return offset + varint.decode.bytes
 
     case 1:
       return offset + 8
 
     case 2:
-      var len = decodeVarint(buffer, offset)
+      var len = varint.decode(buffer, offset)
       return offset + varint.decode.bytes + len
 
     case 3:
@@ -27,12 +27,6 @@ var skip = function (type, buffer, offset) {
   }
 
   throw new Error('Unknown wire type: ' + type)
-}
-
-var decodeVarint = function (buffer, offset) { // required until https://github.com/chrisdickinson/varint/pull/15 is merged
-  var val = varint.decode(buffer, offset)
-  if (!val && typeof val === 'undefined') throw new Error('Could not decode varint')
-  return val
 }
 
 var defined = function (val) {
@@ -156,14 +150,13 @@ module.exports = function (schema, extraEncodings) {
 
     var decode = genfun()
       ('function decode (buf, offset) {')
-        ('var val = decodeVarint(buf, offset)')
+        ('var val = varint.decode(buf, offset)')
         ('if (%s) throw new Error("Invalid enum value: "+val)', conditions)
         ('decode.bytes = varint.decode.bytes')
         ('return val')
       ('}')
       .toFunction({
-        varint: varint,
-        decodeVarint: decodeVarint
+        varint: varint
       })
 
     return encodings.make(0, encode, decode, varint.encodingLength)
@@ -412,7 +405,7 @@ module.exports = function (schema, extraEncodings) {
         ('decode.bytes = offset - oldOffset')
         ('return obj')
       ('}')
-      ('var prefix = decodeVarint(buf, offset)')
+      ('var prefix = varint.decode(buf, offset)')
       ('offset += varint.decode.bytes')
       ('var tag = prefix >> 3')
       ('switch (tag) {')
@@ -432,14 +425,14 @@ module.exports = function (schema, extraEncodings) {
 
       if (packed) {
         decode()
-          ('var packedEnd = decodeVarint(buf, offset)')
+          ('var packedEnd = varint.decode(buf, offset)')
           ('offset += varint.decode.bytes')
           ('packedEnd += offset')
           ('while (offset < packedEnd) {')
       }
 
       if (e.message) {
-        decode('var len = decodeVarint(buf, offset)')
+        decode('var len = varint.decode(buf, offset)')
         decode('offset += varint.decode.bytes')
         if (f.map) {
           decode('var tmp = enc[%d].decode(buf, offset, offset + len)', i)
@@ -473,7 +466,6 @@ module.exports = function (schema, extraEncodings) {
 
     decode = decode.toFunction({
       varint: varint,
-      decodeVarint: decodeVarint,
       skip: skip,
       enc: enc
     })
