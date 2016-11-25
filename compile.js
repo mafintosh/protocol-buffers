@@ -131,7 +131,7 @@ module.exports = function (schema, extraEncodings) {
   var compileEnum = function (e) {
     var conditions = Object.keys(e.values)
       .map(function (k) {
-        return 'val !== ' + parseInt(e.values[k], 10)
+        return 'val !== ' + parseInt(e.values[k].value, 10)
       })
       .join(' && ')
 
@@ -372,7 +372,7 @@ module.exports = function (schema, extraEncodings) {
         if (f.repeated) {
           objectKeys.push(genobj.property(f.name) + ': []')
         } else {
-          def = (def && def in vals) ? vals[def] : vals[Object.keys(vals)[0]]
+          def = (def && vals[def]) ? vals[def].value : vals[Object.keys(vals)[0]].value
           objectKeys.push(genobj.property(f.name) + ': ' + parseInt(def || 0, 10))
         }
         return

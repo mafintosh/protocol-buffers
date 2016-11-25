@@ -1,6 +1,15 @@
 var schema = require('protocol-buffers-schema')
 var compile = require('./compile')
 
+var flatten = function (values) {
+  if (!values) return null
+  var result = {}
+  Object.keys(values).forEach(function (k) {
+    result[k] = values[k].value
+  })
+  return result
+}
+
 module.exports = function (proto, opts) {
   if (!opts) opts = {}
   if (!proto) throw new Error('Pass in a .proto string or a protobuf-schema parsed object')
@@ -12,7 +21,7 @@ module.exports = function (proto, opts) {
     var self = this
 
     compile(sch, opts.encodings || {}).forEach(function (m) {
-      self[m.name] = m.values || m
+      self[m.name] = flatten(m.values) || m
     })
   }
 
