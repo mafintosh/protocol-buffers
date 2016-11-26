@@ -5,6 +5,15 @@ var varint = require('varint')
 var genobj = require('generate-object-property')
 var genfun = require('generate-function')
 
+var flatten = function (values) {
+  if (!values) return null
+  var result = {}
+  Object.keys(values).forEach(function (k) {
+    result[k] = values[k].value
+  })
+  return result
+}
+
 var skip = function (type, buffer, offset) {
   switch (type) {
     case 0:
@@ -168,7 +177,7 @@ module.exports = function (schema, extraEncodings) {
     })
 
     m.enums.forEach(function (val) {
-      exports[val.name] = val.values
+      exports[val.name] = flatten(val.values)
     })
 
     exports.type = 2
