@@ -138,35 +138,27 @@ module.exports = function (schema, extraEncodings) {
   visit(schema, '')
 
   var compileEnum = function (e) {
-    var conditions = Object.keys(e.values)
-      .map(function (k) {
-        return 'val !== ' + parseInt(e.values[k].value, 10)
-      })
-      .join(' && ')
+    var values = Object.keys(e.values || []).map(function (k) {
+      return parseInt(e.values[k].value, 10)
+    })
 
-    if (!conditions) conditions = 'true'
+    var encode = function encode (val, buf, offset) {
+      if (!values.length || values.indexOf(val) === -1) {
+        throw new Error('Invalid enum value: ' + val)
+      }
+      varint.encode(val, buf, offset)
+      encode.bytes = varint.encode.bytes
+      return buf
+    }
 
-    var encode = genfun()
-      ('function encode (val, buf, offset) {')
-        ('if (%s) throw new Error("Invalid enum value: "+val)', conditions)
-        ('varint.encode(val, buf, offset)')
-        ('encode.bytes = varint.encode.bytes')
-        ('return buf')
-      ('}')
-      .toFunction({
-        varint: varint
-      })
-
-    var decode = genfun()
-      ('function decode (buf, offset) {')
-        ('var val = varint.decode(buf, offset)')
-        ('if (%s) throw new Error("Invalid enum value: "+val)', conditions)
-        ('decode.bytes = varint.decode.bytes')
-        ('return val')
-      ('}')
-      .toFunction({
-        varint: varint
-      })
+    var decode = function decode (buf, offset) {
+      var val = varint.decode(buf, offset)
+      if (!values.length || values.indexOf(val) === -1) {
+        throw new Error('Invalid enum value: ' + val)
+      }
+      decode.bytes = varint.decode.bytes
+      return val
+    }
 
     return encodings.make(0, encode, decode, varint.encodingLength)
   }
