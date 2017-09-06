@@ -15,6 +15,7 @@
     "varint": "^5.0.0"
   },
   "devDependencies": {
+    "protocol-buffers": "^3.2.1",
     "standard": "^5.4.1",
     "tape": "^3.0.3"
   },

@@ -1,13 +1,23 @@
 var tape = require('tape')
 var fs = require('fs')
+var protobufNpm = require('protocol-buffers')
 var protobuf = require('../')
-var Basic = protobuf(fs.readFileSync(__dirname + '/test.proto')).Basic
+var proto = fs.readFileSync(__dirname + '/test.proto')
+var Basic = protobuf(proto).Basic
+var BasicNpm = protobufNpm(proto).Basic
 
 tape('basic encode', function (t) {
-  var b1 = Basic.encode({
+  var first = {
     num: 1,
     payload: new Buffer('lol')
-  })
+  }
+
+  var b1 = Basic.encode(first)
+
+  var bn1 = BasicNpm.encode(first)
+  console.log('original', bn1)
+  console.log('us', b1)
+  t.same(b1, bn1)
 
   var b2 = Basic.encode({
     num: 1,

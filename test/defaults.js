@@ -15,7 +15,8 @@ tape('defaults decode', function (t) {
     num: 10,
     foo2: 2
   })
-
+  console.log(require('protocol-buffers')(fs.readFileSync(__dirname + '/test.proto')).Defaults.encode({num: 10, foo2: 2}))
+  console.log(b3)
   t.same(Defaults.decode(b3), {
     num: 10,
     foo1: 2,
