@@ -48,3 +48,27 @@ Benchmarking protocol-buffers
   Running object encoding+decoding benchmark...
   Encoded+decoded 1000000 objects in 5077 ms (196967 enc+dec/s)
 ```
+
+### some optimizations to `encode`
+
+```
+Benchmarking JSON (baseline)
+  Running object encoding benchmark...
+  Encoded 1000000 objects in 1448 ms (690608 enc/s)
+
+  Running object decoding benchmark...
+  Decoded 1000000 objects in 1795 ms (557103 dec/s)
+
+  Running object encoding+decoding benchmark...
+  Encoded+decoded 1000000 objects in 3309 ms (302206 enc+dec/s)
+
+Benchmarking protocol-buffers
+  Running object encoding benchmark...
+  Encoded 1000000 objects in 1902 ms (525762 enc/s)
+
+  Running object decoding benchmark...
+  Decoded 1000000 objects in 518 ms (1930502 dec/s)
+
+  Running object encoding+decoding benchmark...
+  Encoded+decoded 1000000 objects in 2331 ms (429000 enc+dec/s)
+```

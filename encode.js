@@ -8,6 +8,14 @@ var varint = require('varint')
 function compileEncode (m, resolve, forEach, enc, oneofs, encodingLength) {
   var oneofsKeys = Object.keys(oneofs)
 
+  var ints = {}
+  for (var i = 0; i < enc.length; i++) {
+    ints[i] = {
+      p: varint.encode(m.fields[i].tag << 3 | 2),
+      h: varint.encode(m.fields[i].tag << 3 | enc[i].type)
+    }
+  }
+
   function encodeField (buf, offset, h, e, packed, innerVal) {
     var j = 0
     if (!packed) {
@@ -64,11 +72,10 @@ function compileEncode (m, resolve, forEach, enc, oneofs, encodingLength) {
         }
         continue
       }
+      var p = ints[i].p
+      var h = ints[i].h
 
       var packed = field.repeated && field.options && field.options.packed && field.options.packed !== 'false'
-
-      var p = varint.encode(field.tag << 3 | 2)
-      var h = varint.encode(field.tag << 3 | e.type)
 
       if (field.map) {
         var tmp = Object.keys(val)
