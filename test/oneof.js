@@ -19,7 +19,7 @@ tape('oneof encode', function (t) {
 tape('oneof encode + decode', function (t) {
   var buf = Property.encode(data)
   var out = Property.decode(buf)
-  t.deepEqual(data, out)
+  t.deepEqual(out, data)
   t.end()
 })
 
