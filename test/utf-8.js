@@ -1,3 +1,5 @@
+'use strict'
+
 var tape = require('tape')
 var fs = require('fs')
 var path = require('path')

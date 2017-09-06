@@ -1,3 +1,5 @@
+'use strict'
+
 var varint = require('varint')
 var svarint = require('signed-varint')
 var Buffer = require('safe-buffer').Buffer

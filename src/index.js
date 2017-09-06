@@ -1,3 +1,5 @@
+'use strict'
+
 var schema = require('protocol-buffers-schema')
 var compile = require('./compile')
 

@@ -1,3 +1,5 @@
+'use strict'
+
 var encodings = require('./encodings')
 var compileDecode = require('./decode')
 var compileEncode = require('./encode')

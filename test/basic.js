@@ -1,3 +1,5 @@
+'use strict'
+
 var tape = require('tape')
 var fs = require('fs')
 var protobufNpm = require('protocol-buffers')
@@ -16,8 +18,7 @@ tape('basic encode', function (t) {
   var b1 = Basic.encode(first)
 
   var bn1 = BasicNpm.encode(first)
-  console.log('original', bn1)
-  console.log('us', b1)
+
   t.same(b1, bn1)
 
   var b2 = Basic.encode({

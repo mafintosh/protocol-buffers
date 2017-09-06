@@ -1,3 +1,6 @@
+/* eslint no-console: "off" */
+'use strict'
+
 var protobuf = require('./')
 var path = require('path')
 var fs = require('fs')

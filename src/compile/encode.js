@@ -1,3 +1,5 @@
+'use strict'
+
 var defined = require('./utils').defined
 var varint = require('varint')
 

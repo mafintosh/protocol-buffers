@@ -1,18 +1,20 @@
 'use strict'
 
-var Buffer = require('safe-buffer').Buffer
-var Benchmark = require('benchmark')
+const Buffer = require('safe-buffer').Buffer
+const Benchmark = require('benchmark')
 if (typeof window !== 'undefined') {
   window.Benchmark = Benchmark
 }
 
-var protobufNpm = require('protocol-buffers')
-var protobuf = require('../')
-var proto = require('./bench.proto')
-var messages = protobuf(proto)
-var messagesNpm = protobufNpm(proto)
+const protobuf = require('protocol-buffers')
+// const protonsNpm = require('protons')
+const protons = require('../')
+const proto = require('./bench.proto')
+const messages = protobuf(proto)
+const messagesBuf = protons(proto)
+// const messagesBuf = protonsNpm(proto)
 
-var EXAMPLE = {
+const EXAMPLE = {
   foo: 'hello',
   hello: 42,
   payload: Buffer.from('a'),
@@ -26,10 +28,10 @@ var EXAMPLE = {
   }
 }
 
-var suite = new Benchmark.Suite()
+const suite = new Benchmark.Suite()
 
 function add (name, encode, decode) {
-  var EXAMPLE_BUFFER = encode(EXAMPLE)
+  const EXAMPLE_BUFFER = encode(EXAMPLE)
 
   suite
     .add(name + ' (encode)', function () {
@@ -44,11 +46,13 @@ function add (name, encode, decode) {
 }
 
 add('JSON', JSON.stringify, JSON.parse)
-add('npm', messagesNpm.Test.encode, messagesNpm.Test.decode)
+add('protocol-buffers', messagesBuf.Test.encode, messagesBuf.Test.decode)
+// TODO: add once published
+// add('npm', messagesNpm.Test.encode, messagesNpm.Test.decode)
 add('local', messages.Test.encode, messages.Test.decode)
 
 suite
-  .on('cycle', function (e) {
+  .on('cycle', (e) => {
     console.log(String(e.target))
   })
   .run()

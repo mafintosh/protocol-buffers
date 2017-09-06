@@ -1,3 +1,5 @@
+'use strict'
+
 var defined = require('./utils').defined
 var varint = require('varint')
 
@@ -39,6 +41,7 @@ function compileEncodingLength (m, enc, oneofs) {
       var field = m.fields[i]
       var val = obj[field.name]
       var hl = hls[i]
+      var len
 
       if (!defined(val)) {
         if (field.required) {
@@ -66,7 +69,7 @@ function compileEncodingLength (m, enc, oneofs) {
           if (!defined(val[j])) {
             continue
           }
-          var len = e.encodingLength(val[j])
+          len = e.encodingLength(val[j])
           packedLen += len
 
           if (e.message) {

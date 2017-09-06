@@ -1,3 +1,6 @@
+/* eslint max-depth: 1 */
+'use strict'
+
 var varint = require('varint')
 var defined = require('./utils').defined
 
@@ -83,6 +86,7 @@ function compileDecode (m, resolve, enc) {
 
     var oldOffset = offset
     var obj = {}
+    var field
 
     while (true) {
       if (end <= offset) {
@@ -99,7 +103,6 @@ function compileDecode (m, resolve, enc) {
         }
 
         // fill out missing defaults
-        var field
         var val
         var def
         for (j = 0; j < enc.length; j++) {
@@ -191,9 +194,9 @@ var skip = function (type, buffer, offset) {
 
     case 5:
       return offset + 4
+    default:
+      throw new Error('Unknown wire type: ' + type)
   }
-
-  throw new Error('Unknown wire type: ' + type)
 }
 
 var defaultValue = function (f, def) {
