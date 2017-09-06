@@ -1,7 +1,7 @@
 var varint = require('varint')
 var defined = require('./utils').defined
 
-function compileDecode (m, resolve, forEach, enc) {
+function compileDecode (m, resolve, enc) {
   var baseObj = {}
   var requiredFields = []
   var fields = {}
@@ -117,7 +117,6 @@ function compileDecode (m, resolve, forEach, enc) {
       var e = enc[i]
       var field = m.fields[i]
 
-      // TODO: extract to parse phase
       var packed = field.repeated && field.options && field.options.packed && field.options.packed !== 'false'
 
       if (packed) {

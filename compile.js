@@ -3,7 +3,6 @@ var compileDecode = require('./decode')
 var compileEncode = require('./encode')
 var compileEncodingLength = require('./encoding-length')
 var varint = require('varint')
-var genobj = require('generate-object-property')
 
 var flatten = function (values) {
   if (!values) return null
@@ -121,13 +120,9 @@ module.exports = function (schema, extraEncodings) {
       return resolve(f.type, m.id)
     })
 
-    var forEach = function (fn) {
-      for (var i = 0; i < enc.length; i++) fn(enc[i], m.fields[i], genobj('obj', m.fields[i].name), i)
-    }
-
-    var encodingLength = compileEncodingLength(forEach, enc, oneofs)
-    var encode = compileEncode(m, resolve, forEach, enc, oneofs, encodingLength)
-    var decode = compileDecode(m, resolve, forEach, enc)
+    var encodingLength = compileEncodingLength(m, enc, oneofs)
+    var encode = compileEncode(m, resolve, enc, oneofs, encodingLength)
+    var decode = compileDecode(m, resolve, enc)
 
     // end of compilation - return all the things
 

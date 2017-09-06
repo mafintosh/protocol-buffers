@@ -1,7 +1,7 @@
 var defined = require('./utils').defined
 var varint = require('varint')
 
-function compileEncode (m, resolve, forEach, enc, oneofs, encodingLength) {
+function compileEncode (m, resolve, enc, oneofs, encodingLength) {
   var oneofsKeys = Object.keys(oneofs)
 
   var ints = {}
