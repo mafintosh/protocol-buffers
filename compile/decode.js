@@ -16,6 +16,8 @@ function compileDecode (m, resolve, enc) {
     var resolved = resolve(field.type, m.id, false)
     var vals = resolved && resolved.values
 
+    m.fields[i].packed = field.repeated && field.options && field.options.packed && field.options.packed !== 'false'
+
     if (field.required) {
       requiredFields.push(field.name)
     }
@@ -117,9 +119,7 @@ function compileDecode (m, resolve, enc) {
       var e = enc[i]
       var field = m.fields[i]
 
-      var packed = field.repeated && field.options && field.options.packed && field.options.packed !== 'false'
-
-      if (packed) {
+      if (field.packed) {
         var packedEnd = varint.decode(buf, offset)
         offset += varint.decode.bytes
         packedEnd += offset

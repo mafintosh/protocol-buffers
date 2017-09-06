@@ -3,19 +3,15 @@ var varint = require('varint')
 
 function compileEncodingLength (m, enc, oneofs) {
   var oneofsKeys = Object.keys(oneofs)
+  var encLength = enc.length
 
-  var hls = []
+  var hls = new Array(encLength)
+
   for (var i = 0; i < m.fields.length; i++) {
-    hls.push(varint.encodingLength(m.fields[i].tag << 3 | enc[i].type))
-  }
+    hls[i] = varint.encodingLength(m.fields[i].tag << 3 | enc[i].type)
 
-  function encodingLengthField (e, val, length, i) {
-    var len = e.encodingLength(val)
-    if (e.message) {
-      length += varint.encodingLength(len)
-    }
-
-    return length + hls[i] + len
+    var field = m.fields[i]
+    m.fields[i].packed = field.repeated && field.options && field.options.packed && field.options.packed !== 'false'
   }
 
   return function encodingLength (obj) {
@@ -38,13 +34,10 @@ function compileEncodingLength (m, enc, oneofs) {
       }
     }
 
-    for (i = 0; i < enc.length; i++) {
+    for (i = 0; i < encLength; i++) {
       var e = enc[i]
       var field = m.fields[i]
       var val = obj[field.name]
-
-      var packed = field.repeated && field.options && field.options.packed && field.options.packed !== 'false'
-
       var hl = hls[i]
 
       if (!defined(val)) {
@@ -63,11 +56,11 @@ function compileEncodingLength (m, enc, oneofs) {
             value: val[tmp[j]]
           }
         }
-        console.log('map', tmp, val)
+
         val = tmp
       }
 
-      if (packed) {
+      if (field.packed) {
         var packedLen = 0
         for (j = 0; j < val.length; j++) {
           if (!defined(val[j])) {
@@ -90,10 +83,12 @@ function compileEncodingLength (m, enc, oneofs) {
             continue
           }
 
-          length = encodingLengthField(e, val[j], length, i)
+          len = e.encodingLength(val[j])
+          length += hl + len + (e.message ? varint.encodingLength(len) : 0)
         }
       } else {
-        length = encodingLengthField(e, val, length, i)
+        len = e.encodingLength(val)
+        length += hl + len + (e.message ? varint.encodingLength(len) : 0)
       }
     }
 
