@@ -6019,6 +6019,16 @@ protocols@^1.1.0, protocols@^1.4.0:
   version "1.4.5"
   resolved "https://registry.yarnpkg.com/protocols/-/protocols-1.4.5.tgz#21de1f441c4ef7094408ed9f1c94f7a114b87557"
 
+protons@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/protons/-/protons-1.0.0.tgz#cf836223ddc727680abf872ffa1ae8f505826fa3"
+  dependencies:
+    brfs "^1.4.3"
+    protocol-buffers-schema "^3.3.1"
+    safe-buffer "^5.1.1"
+    signed-varint "^2.0.1"
+    varint "^5.0.0"
+
 prr@~0.0.0:
   version "0.0.0"
   resolved "https://registry.yarnpkg.com/prr/-/prr-0.0.0.tgz#1a84b85908325501411853d0081ee3fa86e2926a"

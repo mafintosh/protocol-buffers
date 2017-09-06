@@ -7,12 +7,12 @@ if (typeof window !== 'undefined') {
 }
 
 const protobuf = require('protocol-buffers')
-// const protonsNpm = require('protons')
+const protonsNpm = require('protons')
 const protons = require('../')
 const proto = require('./bench.proto')
 const messages = protobuf(proto)
 const messagesBuf = protons(proto)
-// const messagesBuf = protonsNpm(proto)
+const messagesNpm = protonsNpm(proto)
 
 const EXAMPLE = {
   foo: 'hello',
@@ -47,8 +47,7 @@ function add (name, encode, decode) {
 
 add('JSON', JSON.stringify, JSON.parse)
 add('protocol-buffers', messagesBuf.Test.encode, messagesBuf.Test.decode)
-// TODO: add once published
-// add('npm', messagesNpm.Test.encode, messagesNpm.Test.decode)
+add('npm', messagesNpm.Test.encode, messagesNpm.Test.decode)
 add('local', messages.Test.encode, messages.Test.decode)
 
 suite

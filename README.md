@@ -1,5 +1,8 @@
 # protons
 
+[![Dependency Status](https://david-dm.org/dignifiedquire/protons.svg?style=flat-square)](https://david-dm.org/dignifiedquire/protons)
+[![Travis CI](https://travis-ci.org/dignifiedquire/protons.svg?branch=master)](https://travis-ci.org/dignifiedquire/protons)
+
 > [Protocol Buffers](https://developers.google.com/protocol-buffers/) for Node.js and the browser without compilation and `eval`.
 >
 > Forked from [protocol-buffers](https://github.com/mafintos/protocol-buffers) to remove usage of `eval`.
@@ -82,7 +85,18 @@ You can run the benchmarks yourself by doing `npm run bench`.
 On my Macbook Pro it gives the following results
 
 ```
-
+JSON (encode) x 516,087 ops/sec ±6.68% (73 runs sampled)
+JSON (decode) x 534,339 ops/sec ±1.79% (89 runs sampled)
+JSON(encode + decode) x 236,625 ops/sec ±5.42% (81 runs sampled)
+protocol-buffers (encode) x 385,121 ops/sec ±3.89% (82 runs sampled)
+protocol-buffers (decode) x 945,545 ops/sec ±2.39% (86 runs sampled)
+protocol-buffers(encode + decode) x 279,605 ops/sec ±2.83% (86 runs sampled)
+npm (encode) x 377,625 ops/sec ±3.15% (84 runs sampled)
+npm (decode) x 948,428 ops/sec ±3.59% (87 runs sampled)
+npm(encode + decode) x 251,929 ops/sec ±2.91% (81 runs sampled)
+local (encode) x 373,376 ops/sec ±6.90% (66 runs sampled)
+local (decode) x 1,770,870 ops/sec ±1.50% (83 runs sampled)
+local(encode + decode) x 322,507 ops/sec ±2.82% (79 runs sampled)
 ```
 
 Note that JSON parsing/serialization in node is a native function that is *really* fast.
