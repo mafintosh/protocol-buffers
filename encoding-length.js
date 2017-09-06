@@ -1,5 +1,6 @@
 /* eslint-disable no-spaced-func */
 /* eslint-disable no-unexpected-multiline */
+/* eslint-disable */
 var defined = require('./utils').defined
 var varint = require('varint')
 var genobj = require('generate-object-property')

@@ -1,10 +1,11 @@
 var tape = require('tape')
 var fs = require('fs')
+var path = require('path')
 var protobuf = require('../')
-var Defaults = protobuf(fs.readFileSync(__dirname + '/test.proto')).Defaults
+var Defaults = protobuf(fs.readFileSync(path.join(__dirname, '/test.proto'))).Defaults
 
 tape('defaults decode', function (t) {
-  var o1 = Defaults.decode(new Buffer(0)) // everything default
+  var o1 = Defaults.decode(Buffer.alloc(0)) // everything default
 
   var b2 = Defaults.encode({
     num: 10,
@@ -15,8 +16,7 @@ tape('defaults decode', function (t) {
     num: 10,
     foo2: 2
   })
-  console.log(require('protocol-buffers')(fs.readFileSync(__dirname + '/test.proto')).Defaults.encode({num: 10, foo2: 2}))
-  console.log(b3)
+
   t.same(Defaults.decode(b3), {
     num: 10,
     foo1: 2,

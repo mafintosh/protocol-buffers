@@ -1,5 +1,3 @@
-/* eslint-disable no-spaced-func */
-/* eslint-disable no-unexpected-multiline */
 var encodings = require('./encodings')
 var compileDecode = require('./decode')
 var compileEncode = require('./encode')
@@ -160,7 +158,8 @@ module.exports = function (schema, extraEncodings) {
     if (!m) throw new Error('Could not resolve ' + name)
 
     if (m.values) return compileEnum(m)
-    return cache[m.id] || compileMessage(m, cache[m.id] = {})
+    var res = cache[m.id] || compileMessage(m, cache[m.id] = {})
+    return res
   }
 
   return (schema.enums || []).concat((schema.messages || []).map(function (message) {

@@ -1,26 +1,27 @@
 var tape = require('tape')
 var fs = require('fs')
+var path = require('path')
 var protobuf = require('../')
-var Repeated = protobuf(fs.readFileSync(__dirname + '/test.proto')).Repeated
+var Repeated = protobuf(fs.readFileSync(path.join(__dirname, '/test.proto'))).Repeated
 
 tape('repeated encode', function (t) {
   var b1 = Repeated.encode({
     list: [{
       num: 1,
-      payload: new Buffer('lol')
+      payload: Buffer.from('lol')
     }, {
       num: 2,
-      payload: new Buffer('lol1')
+      payload: Buffer.from('lol1')
     }]
   })
 
   var b2 = Repeated.encode({
     list: [{
       num: 1,
-      payload: new Buffer('lol')
+      payload: Buffer.from('lol')
     }, {
       num: 2,
-      payload: new Buffer('lol1'),
+      payload: Buffer.from('lol1'),
       meeeeh: 100
     }],
     meeh: 42
@@ -34,10 +35,10 @@ tape('repeated encode + decode', function (t) {
   var b1 = Repeated.encode({
     list: [{
       num: 1,
-      payload: new Buffer('lol')
+      payload: Buffer.from('lol')
     }, {
       num: 2,
-      payload: new Buffer('lol1')
+      payload: Buffer.from('lol1')
     }]
   })
 
@@ -45,17 +46,17 @@ tape('repeated encode + decode', function (t) {
 
   t.same(o1.list.length, 2)
   t.same(o1.list[0].num, 1)
-  t.same(o1.list[0].payload, new Buffer('lol'))
+  t.same(o1.list[0].payload, Buffer.from('lol'))
   t.same(o1.list[1].num, 2)
-  t.same(o1.list[1].payload, new Buffer('lol1'))
+  t.same(o1.list[1].payload, Buffer.from('lol1'))
 
   var b2 = Repeated.encode({
     list: [{
       num: 1,
-      payload: new Buffer('lol')
+      payload: Buffer.from('lol')
     }, {
       num: 2,
-      payload: new Buffer('lol1'),
+      payload: Buffer.from('lol1'),
       meeeeh: 100
     }],
     meeh: 42

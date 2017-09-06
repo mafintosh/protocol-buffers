@@ -2,14 +2,15 @@ var tape = require('tape')
 var fs = require('fs')
 var protobufNpm = require('protocol-buffers')
 var protobuf = require('../')
-var proto = fs.readFileSync(__dirname + '/test.proto')
+var path = require('path')
+var proto = fs.readFileSync(path.join(__dirname, '/test.proto'))
 var Basic = protobuf(proto).Basic
 var BasicNpm = protobufNpm(proto).Basic
 
 tape('basic encode', function (t) {
   var first = {
     num: 1,
-    payload: new Buffer('lol')
+    payload: Buffer.from('lol')
   }
 
   var b1 = Basic.encode(first)
@@ -21,7 +22,7 @@ tape('basic encode', function (t) {
 
   var b2 = Basic.encode({
     num: 1,
-    payload: new Buffer('lol'),
+    payload: Buffer.from('lol'),
     meeeh: 42
   })
 
@@ -39,17 +40,17 @@ tape('basic encode', function (t) {
 tape('basic encode + decode', function (t) {
   var b1 = Basic.encode({
     num: 1,
-    payload: new Buffer('lol')
+    payload: Buffer.from('lol')
   })
 
   var o1 = Basic.decode(b1)
 
   t.same(o1.num, 1)
-  t.same(o1.payload, new Buffer('lol'))
+  t.same(o1.payload, Buffer.from('lol'))
 
   var b2 = Basic.encode({
     num: 1,
-    payload: new Buffer('lol'),
+    payload: Buffer.from('lol'),
     meeeh: 42
   })
 
@@ -62,12 +63,12 @@ tape('basic encode + decode', function (t) {
 tape('basic encode + decode floats', function (t) {
   var b1 = Basic.encode({
     num: 1.1,
-    payload: new Buffer('lol')
+    payload: Buffer.from('lol')
   })
 
   var o1 = Basic.decode(b1)
 
   t.same(o1.num, 1.1)
-  t.same(o1.payload, new Buffer('lol'))
+  t.same(o1.payload, Buffer.from('lol'))
   t.end()
 })

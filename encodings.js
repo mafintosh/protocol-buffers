@@ -1,5 +1,6 @@
 var varint = require('varint')
 var svarint = require('signed-varint')
+var Buffer = require('safe-buffer').Buffer
 
 var encoder = function (type, encode, decode, encodingLength) {
   encode.bytes = decode.bytes = 0
@@ -138,7 +139,7 @@ exports.int64 = (function () {
       var limit = 9
       while (buffer[offset + limit - 1] === 0xff) limit--
       limit = limit || 9
-      var subset = new Buffer(limit)
+      var subset = Buffer.allocUnsafe(limit)
       buffer.copy(subset, 0, offset, offset + limit)
       subset[limit - 1] = subset[limit - 1] & 0x7f
       val = -1 * varint.decode(subset, 0)

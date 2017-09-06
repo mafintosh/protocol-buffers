@@ -1,5 +1,3 @@
-/* eslint-disable no-spaced-func */
-/* eslint-disable no-unexpected-multiline */
 var varint = require('varint')
 var defined = require('./utils').defined
 

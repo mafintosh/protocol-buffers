@@ -8,17 +8,18 @@
   },
   "dependencies": {
     "benchmark": "^2.1.4",
-    "brfs": "^1.4.0",
+    "brfs": "^1.4.3",
     "generate-function": "^2.0.0",
     "generate-object-property": "^1.2.0",
-    "protocol-buffers-schema": "^3.1.1",
-    "signed-varint": "^2.0.0",
+    "protocol-buffers-schema": "^3.3.1",
+    "safe-buffer": "^5.1.1",
+    "signed-varint": "^2.0.1",
     "varint": "^5.0.0"
   },
   "devDependencies": {
     "protocol-buffers": "^3.2.1",
-    "standard": "^5.4.1",
-    "tape": "^3.0.3"
+    "standard": "^10.0.3",
+    "tape": "^4.8.0"
   },
   "scripts": {
     "test": "standard && tape test/*.js",

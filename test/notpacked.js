@@ -1,8 +1,10 @@
 var tape = require('tape')
 var fs = require('fs')
+var path = require('path')
 var protobuf = require('../')
-var NotPacked = protobuf(fs.readFileSync(__dirname + '/test.proto')).NotPacked
-var FalsePacked = protobuf(fs.readFileSync(__dirname + '/test.proto')).FalsePacked
+var proto = fs.readFileSync(path.join(__dirname, '/test.proto'))
+var NotPacked = protobuf(proto).NotPacked
+var FalsePacked = protobuf(proto).FalsePacked
 
 tape('NotPacked encode + FalsePacked decode', function (t) {
   var b1 = NotPacked.encode({

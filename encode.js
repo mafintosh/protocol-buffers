@@ -1,9 +1,5 @@
-/* eslint-disable no-spaced-func */
-/* eslint-disable no-unexpected-multiline */
 var defined = require('./utils').defined
 var varint = require('varint')
-// var genobj = require('generate-object-property')
-// var genfun = require('generate-function')
 
 function compileEncode (m, resolve, forEach, enc, oneofs, encodingLength) {
   var oneofsKeys = Object.keys(oneofs)
