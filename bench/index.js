@@ -1,10 +1,14 @@
+'use strict'
+
 var Buffer = require('safe-buffer').Buffer
 var Benchmark = require('benchmark')
+if (typeof window !== 'undefined') {
+  window.Benchmark = Benchmark
+}
+
 var protobufNpm = require('protocol-buffers')
 var protobuf = require('../')
-var fs = require('fs')
-var path = require('path')
-var proto = fs.readFileSync(path.join(__dirname, '/bench.proto'))
+var proto = require('./bench.proto')
 var messages = protobuf(proto)
 var messagesNpm = protobufNpm(proto)
 
