@@ -52,7 +52,7 @@ function compileEncode (m, resolve, enc, oneofs, encodingLength) {
       var prop = oneofs[i]
       if (objKeys.indexOf(prop) > -1) {
         if (match) {
-          throw new Error('only one of the propoerties defined in oneof ' + name + ' can be set')
+          throw new Error('only one of the properties defined in oneof ' + name + ' can be set')
         }
 
         match = true

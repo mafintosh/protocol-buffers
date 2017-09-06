@@ -2,10 +2,10 @@ var varint = require('varint')
 var defined = require('./utils').defined
 
 function compileDecode (m, resolve, enc) {
-  var baseObj = {}
   var requiredFields = []
   var fields = {}
   var oneofFields = []
+  var vals = []
 
   for (var i = 0; i < enc.length; i++) {
     var field = m.fields[i]
@@ -14,7 +14,7 @@ function compileDecode (m, resolve, enc) {
 
     var def = field.options && field.options.default
     var resolved = resolve(field.type, m.id, false)
-    var vals = resolved && resolved.values
+    vals[i] = [def, resolved && resolved.values]
 
     m.fields[i].packed = field.repeated && field.options && field.options.packed && field.options.packed !== 'false'
 
@@ -25,20 +25,21 @@ function compileDecode (m, resolve, enc) {
     if (field.oneof) {
       oneofFields.push(field.name)
     }
-
-    if (vals) { // is enum
-      if (field.repeated) {
-        baseObj[field.name] = []
-      } else {
-        def = (def && vals[def]) ? vals[def].value : vals[Object.keys(vals)[0]].value
-        baseObj[field.name] = parseInt(def || 0, 10)
-      }
-    } else {
-      baseObj[field.name] = defaultValue(field, def)
-    }
   }
 
   function decodeField (e, field, obj, buf, offset, i) {
+    var name = field.name
+
+    if (field.oneof) {
+      // clear already defined oneof fields
+      var props = Object.keys(obj)
+      for (var j = 0; j < props.length; j++) {
+        if (oneofFields.indexOf(props[j]) > -1) {
+          delete obj[props[j]]
+        }
+      }
+    }
+
     if (e.message) {
       var len = varint.decode(buf, offset)
       offset += varint.decode.bytes
@@ -46,28 +47,20 @@ function compileDecode (m, resolve, enc) {
       var decoded = e.decode(buf, offset, offset + len)
 
       if (field.map) {
-        obj[field.name][decoded.key] = decoded.value
+        obj[name] = obj[name] || {}
+        obj[name][decoded.key] = decoded.value
       } else if (field.repeated) {
-        obj[field.name].push(decoded)
+        obj[name] = obj[name] || []
+        obj[name].push(decoded)
       } else {
-        obj[field.name] = decoded
+        obj[name] = decoded
       }
     } else {
       if (field.repeated) {
-        obj[field.name].push(e.decode(buf, offset))
+        obj[name] = obj[name] || []
+        obj[name].push(e.decode(buf, offset))
       } else {
-        obj[field.name] = e.decode(buf, offset)
-      }
-    }
-
-    // clear out duplicate oneofs
-    if (field.oneof) {
-      var name
-      for (var j = 0; j < oneofFields.length; j++) {
-        name = oneofFields[j]
-        if (field.name !== name) {
-          delete obj[name]
-        }
+        obj[name] = e.decode(buf, offset)
       }
     }
 
@@ -89,15 +82,60 @@ function compileDecode (m, resolve, enc) {
     }
 
     var oldOffset = offset
-    var obj = Object.assign({}, baseObj)
+    var obj = {}
 
     while (true) {
       if (end <= offset) {
-        var name
-        for (var j = 0; j < requiredFields.length; j++) {
+        // finished
+
+        // check required methods
+        var name = ''
+        var j = 0
+        for (j = 0; j < requiredFields.length; j++) {
           name = requiredFields[j]
           if (!defined(obj[name])) {
             throw new Error('Decoded message is not valid, missing required field: ' + name)
+          }
+        }
+
+        // fill out missing defaults
+        var field
+        var val
+        var def
+        for (j = 0; j < enc.length; j++) {
+          field = m.fields[j]
+          def = vals[j][0]
+          val = vals[j][1]
+          name = field.name
+
+          if (defined(obj[name])) {
+            continue
+          }
+
+          var done = false
+          if (field.oneof) {
+            var props = Object.keys(obj)
+            for (var k = 0; k < props.length; k++) {
+              if (oneofFields.indexOf(props[k]) > -1) {
+                done = true
+                break
+              }
+            }
+          }
+
+          if (done) {
+            continue
+          }
+
+          if (val) { // is enum
+            if (field.repeated) {
+              obj[name] = []
+            } else {
+              def = (def && val[def]) ? val[def].value : val[Object.keys(val)[0]].value
+              obj[name] = parseInt(def || 0, 10)
+            }
+          } else {
+            obj[name] = defaultValue(field, def)
           }
         }
 
@@ -117,7 +155,7 @@ function compileDecode (m, resolve, enc) {
       }
 
       var e = enc[i]
-      var field = m.fields[i]
+      field = m.fields[i]
 
       if (field.packed) {
         var packedEnd = varint.decode(buf, offset)
