@@ -1,6 +1,5 @@
 var varint = require('varint')
 var defined = require('./utils').defined
-var clone = require('clone-deep')
 
 function compileDecode (m, resolve, forEach, enc) {
   var baseObj = {}
@@ -88,7 +87,7 @@ function compileDecode (m, resolve, forEach, enc) {
     }
 
     var oldOffset = offset
-    var obj = clone(baseObj)
+    var obj = Object.assign({}, baseObj)
 
     while (true) {
       if (end <= offset) {
