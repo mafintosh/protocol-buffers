@@ -1,5 +1,6 @@
 var varint = require('varint')
 var defined = require('./utils').defined
+var clone = require('clone-deep')
 
 function compileDecode (m, resolve, forEach, enc) {
   var baseObj = {}
@@ -307,10 +308,6 @@ var defaultValue = function (f, def) {
     default:
       return null
   }
-}
-
-function clone (obj) {
-  return JSON.parse(JSON.stringify(obj))
 }
 
 module.exports = compileDecode
