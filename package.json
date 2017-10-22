@@ -7,7 +7,6 @@
     "url": "https://github.com/dignifiedquire/protons"
   },
   "dependencies": {
-    "brfs": "^1.4.3",
     "protocol-buffers-schema": "^3.3.1",
     "safe-buffer": "^5.1.1",
     "signed-varint": "^2.0.1",
@@ -25,11 +24,6 @@
     "lint": "aegir lint",
     "test": "tape test/*.js",
     "bench": "node bench"
-  },
-  "browserify": {
-    "transform": [
-      "brfs"
-    ]
   },
   "bugs": {
     "url": "https://github.com/dignifiedquire/protons/issues"
