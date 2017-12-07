@@ -1,7 +1,7 @@
 # protons
 
-[![Dependency Status](https://david-dm.org/dignifiedquire/protons.svg?style=flat-square)](https://david-dm.org/dignifiedquire/protons)
-[![Travis CI](https://travis-ci.org/dignifiedquire/protons.svg?branch=master)](https://travis-ci.org/dignifiedquire/protons)
+[![Dependency Status](https://david-dm.org/ipfs/protons.svg?style=flat-square)](https://david-dm.org/ipfs/protons)
+[![Travis CI](https://travis-ci.org/ipfs/protons.svg?branch=master)](https://travis-ci.org/ipfs/protons)
 
 > [Protocol Buffers](https://developers.google.com/protocol-buffers/) for Node.js and the browser without compilation and `eval`.
 >
