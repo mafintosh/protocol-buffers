@@ -1,61 +1,57 @@
-var protobuf = require('../')
-var fs = require('fs')
-var messages = protobuf(fs.readFileSync(__dirname + '/bench.proto'))
+'use strict'
 
-var TIMES = 1000000
-
-var then = 0
-var diff = 0
-
-var run = function (name, encode, decode) {
-  var EXAMPLE = {
-    foo: 'hello',
-    hello: 42,
-    payload: new Buffer('a'),
-    meh: {
-      b: {
-        tmp: {
-          baz: 1000
-        }
-      },
-      lol: 'lol'
-    }
-  }
-
-  var EXAMPLE_BUFFER = encode(EXAMPLE)
-  var i
-
-  console.log('Benchmarking %s', name)
-  console.log('  Running object encoding benchmark...')
-
-  then = Date.now()
-  for (i = 0; i < TIMES; i++) {
-    encode(EXAMPLE)
-  }
-  diff = Date.now() - then
-
-  console.log('  Encoded %d objects in %d ms (%d enc/s)\n', TIMES, diff, (1000 * TIMES / diff).toFixed(0))
-
-  console.log('  Running object decoding benchmark...')
-
-  then = Date.now()
-  for (i = 0; i < TIMES; i++) {
-    decode(EXAMPLE_BUFFER)
-  }
-  diff = Date.now() - then
-
-  console.log('  Decoded %d objects in %d ms (%d dec/s)\n', TIMES, diff, (1000 * TIMES / diff).toFixed(0))
-
-  console.log('  Running object encoding+decoding benchmark...')
-
-  then = Date.now()
-  for (i = 0; i < TIMES; i++) {
-    decode(encode(EXAMPLE))
-  }
-  diff = Date.now() - then
-
-  console.log('  Encoded+decoded %d objects in %d ms (%d enc+dec/s)\n', TIMES, diff, (1000 * TIMES / diff).toFixed(0))
+const Buffer = require('safe-buffer').Buffer
+const Benchmark = require('benchmark')
+if (typeof window !== 'undefined') {
+  window.Benchmark = Benchmark
 }
 
-run('JSON (baseline)', JSON.stringify, JSON.parse)
-run('protocol-buffers', messages.Test.encode, messages.Test.decode)
+const protobuf = require('protocol-buffers')
+const protonsNpm = require('protons')
+const protons = require('../')
+const proto = require('./bench.proto')
+const messages = protobuf(proto)
+const messagesBuf = protons(proto)
+const messagesNpm = protonsNpm(proto)
+
+const EXAMPLE = {
+  foo: 'hello',
+  hello: 42,
+  payload: Buffer.from('a'),
+  meh: {
+    b: {
+      tmp: {
+        baz: 1000
+      }
+    },
+    lol: 'lol'
+  }
+}
+
+const suite = new Benchmark.Suite()
+
+function add (name, encode, decode) {
+  const EXAMPLE_BUFFER = encode(EXAMPLE)
+
+  suite
+    .add(name + ' (encode)', function () {
+      return encode(EXAMPLE)
+    })
+    .add(name + ' (decode)', function () {
+      return decode(EXAMPLE_BUFFER)
+    })
+    .add(name + '(encode + decode)', function () {
+      return decode(encode(EXAMPLE))
+    })
+}
+
+add('JSON', JSON.stringify, JSON.parse)
+add('protocol-buffers', messagesBuf.Test.encode, messagesBuf.Test.decode)
+add('npm', messagesNpm.Test.encode, messagesNpm.Test.decode)
+add('local', messages.Test.encode, messages.Test.decode)
+
+suite
+  .on('cycle', (e) => {
+    console.log(String(e.target))
+  })
+  .run()

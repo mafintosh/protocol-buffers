@@ -1,7 +1,11 @@
+/* eslint no-console: "off" */
+'use strict'
+
 var protobuf = require('./')
+var path = require('path')
 var fs = require('fs')
 
-var messages = protobuf(fs.readFileSync(__dirname + '/example.proto'))
+var messages = protobuf(fs.readFileSync(path.join(__dirname, '/example.proto')))
 
 var ex = {
   foo: 'hello world',

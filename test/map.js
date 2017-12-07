@@ -1,7 +1,10 @@
+'use strict'
+
 var tape = require('tape')
 var fs = require('fs')
+var path = require('path')
 var protobuf = require('../')
-var Map = protobuf(fs.readFileSync(__dirname + '/test.proto')).Map
+var Map = protobuf(fs.readFileSync(path.join(__dirname, '/test.proto'))).Map
 
 tape('map encode + decode', function (t) {
   var b1 = Map.encode({

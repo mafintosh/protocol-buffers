@@ -1,13 +1,15 @@
-# protocol-buffers
+# protons
 
-[Protocol Buffers](https://developers.google.com/protocol-buffers/) for Node.js
+[![Dependency Status](https://david-dm.org/ipfs/protons.svg?style=flat-square)](https://david-dm.org/ipfs/protons)
+[![Travis CI](https://travis-ci.org/ipfs/protons.svg?branch=master)](https://travis-ci.org/ipfs/protons)
+
+> [Protocol Buffers](https://developers.google.com/protocol-buffers/) for Node.js and the browser without compilation and `eval`.
+>
+> Forked from [protocol-buffers](https://github.com/mafintos/protocol-buffers) to remove usage of `eval`.
 
 ```
-npm install protocol-buffers
+> npm install protons
 ```
-
-[![build status](https://travis-ci.org/mafintosh/protocol-buffers.svg?branch=master)](https://travis-ci.org/mafintosh/protocol-buffers)
-![dat](http://img.shields.io/badge/Development%20sponsored%20by-dat-green.svg?style=flat)
 
 ## Usage
 
@@ -31,12 +33,12 @@ message AnotherOne {
 Use the above proto file to encode/decode messages by doing
 
 ``` js
-var protobuf = require('protocol-buffers')
+const protons = require('protons')
 
 // pass a proto file as a buffer/string or pass a parsed protobuf-schema object
-var messages = protobuf(fs.readFileSync('test.proto'))
+const messages = protons(fs.readFileSync('test.proto'))
 
-var buf = messages.Test.encode({
+const buf = messages.Test.encode({
   num: 42,
   payload: 'hello world'
 })
@@ -47,14 +49,14 @@ console.log(buf) // should print a buffer
 To decode a message use `Test.decode`
 
 ``` js
-var obj = messages.Test.decode(buf)
+const obj = messages.Test.decode(buf)
 console.log(obj) // should print an object similar to above
 ```
 
 Enums are accessed in the same way as messages
 
 ``` js
-var buf = messages.AnotherOne.encode({
+const buf = messages.AnotherOne.encode({
   list: [
     messages.FOO.BAR
   ]
@@ -64,7 +66,7 @@ var buf = messages.AnotherOne.encode({
 Nested emums are accessed as properties on the corresponding message
 
 ``` js
-var buf = message.SomeMessage.encode({
+const buf = message.SomeMessage.encode({
   list: [
     messages.SomeMessage.NESTED_ENUM.VALUE
   ]
@@ -76,33 +78,25 @@ available types etc.
 
 ## Performance
 
-This module is fast.
+This module is pretty fast.
 
-It uses code generation to build as fast as possible encoders/decoders for the protobuf schema.
 You can run the benchmarks yourself by doing `npm run bench`.
 
-On my Macbook Air it gives the following results
+On my Macbook Pro it gives the following results
 
 ```
-Benchmarking JSON (baseline)
-  Running object encoding benchmark...
-  Encoded 1000000 objects in 2142 ms (466853 enc/s)
-
-  Running object decoding benchmark...
-  Decoded 1000000 objects in 970 ms (1030928 dec/s)
-
-  Running object encoding+decoding benchmark...
-  Encoded+decoded 1000000 objects in 3131 ms (319387 enc+dec/s)
-
-Benchmarking protocol-buffers
-  Running object encoding benchmark...
-  Encoded 1000000 objects in 2089 ms (478698 enc/s)
-
-  Running object decoding benchmark...
-  Decoded 1000000 objects in 735 ms (1360544 dec/s)
-
-  Running object encoding+decoding benchmark...
-  Encoded+decoded 1000000 objects in 2826 ms (353857 enc+dec/s)
+JSON (encode) x 516,087 ops/sec ±6.68% (73 runs sampled)
+JSON (decode) x 534,339 ops/sec ±1.79% (89 runs sampled)
+JSON(encode + decode) x 236,625 ops/sec ±5.42% (81 runs sampled)
+protocol-buffers (encode) x 385,121 ops/sec ±3.89% (82 runs sampled)
+protocol-buffers (decode) x 945,545 ops/sec ±2.39% (86 runs sampled)
+protocol-buffers(encode + decode) x 279,605 ops/sec ±2.83% (86 runs sampled)
+npm (encode) x 377,625 ops/sec ±3.15% (84 runs sampled)
+npm (decode) x 948,428 ops/sec ±3.59% (87 runs sampled)
+npm(encode + decode) x 251,929 ops/sec ±2.91% (81 runs sampled)
+local (encode) x 373,376 ops/sec ±6.90% (66 runs sampled)
+local (decode) x 1,770,870 ops/sec ±1.50% (83 runs sampled)
+local(encode + decode) x 322,507 ops/sec ±2.82% (79 runs sampled)
 ```
 
 Note that JSON parsing/serialization in node is a native function that is *really* fast.
@@ -113,11 +107,11 @@ Compiled protocol buffers messages are valid levelup encodings.
 This means you can pass them as `valueEncoding` and `keyEncoding`.
 
 ``` js
-var level = require('level')
-var db = level('db')
+const level = require('level')
+const db = level('db')
 
-db.put('hello', {payload:'world'}, {valueEncoding:messages.Test}, function(err) {
-  db.get('hello', {valueEncoding:messages.Test}, function(err, message) {
+db.put('hello', {payload:'world'}, {valueEncoding:messages.Test}, (err) => {
+  db.get('hello', {valueEncoding:messages.Test}, (err, message) => {
     console.log(message)
   })
 })

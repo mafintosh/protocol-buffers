@@ -1,4 +1,6 @@
-message Bar {
+'use strict'
+
+module.exports = `message Bar {
   message Foo {
     optional uint32 baz = 1;
   }
@@ -25,4 +27,4 @@ message Test {
   optional uint32 hello = 3;
   optional string foo = 1;
   optional bytes payload = 7;
-}
+}`

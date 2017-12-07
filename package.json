@@ -1,37 +1,35 @@
 {
-  "name": "protocol-buffers",
-  "version": "3.2.1",
-  "description": "Protocol Buffers for Node.js",
+  "name": "protons",
+  "version": "1.0.0",
+  "description": "Protocol Buffers for Node.js without compiliation",
   "repository": {
     "type": "git",
-    "url": "https://github.com/mafintosh/protocol-buffers"
+    "url": "https://github.com/ipfs/protons"
   },
   "dependencies": {
-    "brfs": "^1.4.0",
-    "generate-function": "^2.0.0",
-    "generate-object-property": "^1.2.0",
-    "protocol-buffers-schema": "^3.1.1",
-    "signed-varint": "^2.0.0",
+    "protocol-buffers-schema": "^3.3.1",
+    "safe-buffer": "^5.1.1",
+    "signed-varint": "^2.0.1",
     "varint": "^5.0.0"
   },
   "devDependencies": {
-    "standard": "^5.4.1",
-    "tape": "^3.0.3"
+    "aegir": "^12.0.6",
+    "benchmark": "^2.1.4",
+    "protocol-buffers": "^3.2.1",
+    "protons": "^1.0.0",
+    "standard": "^10.0.3",
+    "tape": "^4.8.0"
   },
   "scripts": {
-    "test": "standard && tape test/*.js",
+    "lint": "aegir lint",
+    "test": "tape test/*.js",
     "bench": "node bench"
   },
-  "browserify": {
-    "transform": [
-      "brfs"
-    ]
-  },
   "bugs": {
-    "url": "https://github.com/mafintosh/protocol-buffers/issues"
+    "url": "https://github.com/ipfs/protons/issues"
   },
-  "homepage": "https://github.com/mafintosh/protocol-buffers",
-  "main": "index.js",
+  "homepage": "https://github.com/ipfs/protons",
+  "main": "src/index.js",
   "directories": {
     "test": "test"
   },
@@ -49,6 +47,6 @@
     "encodings",
     "encoding"
   ],
-  "author": "Mathias Buus",
+  "author": "Friedel Ziegelmayer <dignifiedquire@gmail.com>",
   "license": "MIT"
 }

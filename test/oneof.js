@@ -1,7 +1,10 @@
+'use strict'
+
 var tape = require('tape')
 var fs = require('fs')
+var path = require('path')
 var protobuf = require('../')
-var proto = protobuf(fs.readFileSync(__dirname + '/test.proto'))
+var proto = protobuf(fs.readFileSync(path.join(__dirname, '/test.proto')))
 var Property = proto.Property
 var PropertyNoOneof = proto.PropertyNoOneof
 
@@ -19,7 +22,7 @@ tape('oneof encode', function (t) {
 tape('oneof encode + decode', function (t) {
   var buf = Property.encode(data)
   var out = Property.decode(buf)
-  t.deepEqual(data, out)
+  t.deepEqual(out, data)
   t.end()
 })
 

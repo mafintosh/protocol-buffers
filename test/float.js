@@ -1,7 +1,10 @@
+'use strict'
+
 var tape = require('tape')
 var fs = require('fs')
+var path = require('path')
 var protobuf = require('../')
-var Float = protobuf(fs.readFileSync(__dirname + '/test.proto')).Float
+var Float = protobuf(fs.readFileSync(path.join(__dirname, '/test.proto'))).Float
 
 tape('float encode + decode', function (t) {
   var arr = new Float32Array(3)
