@@ -16,7 +16,7 @@ var flatten = function (values) {
   return result
 }
 
-var skip = function (type, buffer, offset) {
+var skip = function skip (type, buffer, offset) {
   switch (type) {
     case 0:
       varint.decode(buffer, offset)
@@ -40,7 +40,7 @@ var skip = function (type, buffer, offset) {
   throw new Error('Unknown wire type: ' + type)
 }
 
-var defined = function (val) {
+var defined = function defined (val) {
   return val !== null && val !== undefined && (typeof val !== 'number' || !isNaN(val))
 }
 
@@ -280,7 +280,7 @@ module.exports = function (schema, extraEncodings) {
     var encode = genfun()
       ('function encode (obj, buf, offset) {')
         ('if (!offset) offset = 0')
-        ('if (!buf) buf = new Buffer(encodingLength(obj))')
+        ('if (!buf) buf = Buffer.allocUnsafe(encodingLength(obj))')
         ('var oldOffset = offset')
 
     Object.keys(oneofs).forEach(function (name) {
@@ -489,6 +489,7 @@ module.exports = function (schema, extraEncodings) {
     exports.encode = encode
     exports.decode = decode
     exports.encodingLength = encodingLength
+    exports.dependencies = enc
 
     return exports
   }
@@ -520,3 +521,6 @@ module.exports = function (schema, extraEncodings) {
     return resolve(message.id)
   }))
 }
+
+module.exports.defined = defined
+module.exports.skip = skip

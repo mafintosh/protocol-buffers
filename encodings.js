@@ -14,6 +14,14 @@ var encoder = function (type, encode, decode, encodingLength) {
 
 exports.make = encoder
 
+exports.name = function (enc) {
+  var keys = Object.keys(exports)
+  for (var i = 0; i < keys.length; i++) {
+    if (exports[keys[i]] === enc) return keys[i]
+  }
+  return null
+}
+
 exports.bytes = (function (tag) {
   var bufferLength = function (val) {
     return Buffer.isBuffer(val) ? val.length : Buffer.byteLength(val)
