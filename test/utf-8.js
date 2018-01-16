@@ -1,7 +1,8 @@
 var tape = require('tape')
 var fs = require('fs')
+var path = require('path')
 var protobuf = require('../')
-var UTF8 = protobuf(fs.readFileSync(__dirname + '/test.proto')).UTF8
+var UTF8 = protobuf(fs.readFileSync(path.join(__dirname, 'test.proto'))).UTF8
 
 tape('strings can be utf-8', function (t) {
   var ex = {

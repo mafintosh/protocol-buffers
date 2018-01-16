@@ -1,5 +1,7 @@
 /* eslint-disable no-spaced-func */
 /* eslint-disable no-unexpected-multiline */
+/* eslint-disable func-call-spacing */
+
 var encodings = require('./encodings')
 var varint = require('varint')
 var genobj = require('generate-object-property')
@@ -508,7 +510,10 @@ module.exports = function (schema, extraEncodings) {
     if (!m) throw new Error('Could not resolve ' + name)
 
     if (m.values) return compileEnum(m)
-    return cache[m.id] || compileMessage(m, cache[m.id] = {})
+    if (cache[m.id]) return cache[m.id]
+
+    cache[m.id] = {}
+    return compileMessage(m, cache[m.id])
   }
 
   return (schema.enums || []).concat((schema.messages || []).map(function (message) {

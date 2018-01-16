@@ -15,8 +15,8 @@
     "varint": "^5.0.0"
   },
   "devDependencies": {
-    "standard": "^5.4.1",
-    "tape": "^3.0.3"
+    "standard": "^10.0.3",
+    "tape": "^4.8.0"
   },
   "scripts": {
     "test": "standard && tape test/*.js",
