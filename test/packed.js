@@ -7,17 +7,17 @@ var Packed = protobuf(fs.readFileSync(path.join(__dirname, 'test.proto'))).Packe
 tape('Packed encode', function (t) {
   var b1 = Packed.encode({
     packed: [
-      'hello world',
-      'hej verden',
-      'hola mundo'
+      10,
+      42,
+      52
     ]
   })
 
   var b2 = Packed.encode({
     packed: [
-      'hello world',
-      'hej verden',
-      'hola mundo'
+      10,
+      42,
+      52
     ],
     meeh: 42
   })
@@ -29,24 +29,24 @@ tape('Packed encode', function (t) {
 tape('Packed encode + decode', function (t) {
   var b1 = Packed.encode({
     packed: [
-      'hello world',
-      'hej verden',
-      'hola mundo'
+      10,
+      42,
+      52
     ]
   })
 
   var o1 = Packed.decode(b1)
 
   t.same(o1.packed.length, 3)
-  t.same(o1.packed[0], 'hello world')
-  t.same(o1.packed[1], 'hej verden')
-  t.same(o1.packed[2], 'hola mundo')
+  t.same(o1.packed[0], 10)
+  t.same(o1.packed[1], 42)
+  t.same(o1.packed[2], 52)
 
   var b2 = Packed.encode({
     packed: [
-      'hello world',
-      'hej verden',
-      'hola mundo'
+      10,
+      42,
+      52
     ],
     meeh: 42
   })
