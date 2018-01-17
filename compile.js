@@ -174,6 +174,14 @@ module.exports = function (schema, extraEncodings) {
       return resolve(f.type, m.id)
     })
 
+    var dedupEnc = enc.filter(function (e, i) {
+      return enc.indexOf(e) === i
+    })
+
+    var dedupIndex = enc.map(function (e) {
+      return dedupEnc.indexOf(e)
+    })
+
     var forEach = function (fn) {
       for (var i = 0; i < enc.length; i++) fn(enc[i], m.fields[i], genobj('obj', m.fields[i].name), i)
     }
@@ -216,7 +224,7 @@ module.exports = function (schema, extraEncodings) {
           ('var packedLen = 0')
           ('for (var i = 0; i < %s.length; i++) {', val)
             ('if (!defined(%s)) continue', val + '[i]')
-            ('var len = enc[%d].encodingLength(%s)', i, val + '[i]')
+            ('var len = enc[%d].encodingLength(%s)', dedupIndex[i], val + '[i]')
             ('packedLen += len')
 
         if (e.message) encodingLength('packedLen += varint.encodingLength(len)')
@@ -232,7 +240,7 @@ module.exports = function (schema, extraEncodings) {
           encodingLength('if (!defined(%s)) continue', val)
         }
 
-        encodingLength('var len = enc[%d].encodingLength(%s)', i, val)
+        encodingLength('var len = enc[%d].encodingLength(%s)', dedupIndex[i], val)
         if (e.message) encodingLength('length += varint.encodingLength(len)')
         encodingLength('length += %d + len', hl)
         if (f.repeated) encodingLength('}')
@@ -248,7 +256,7 @@ module.exports = function (schema, extraEncodings) {
     encodingLength = encodingLength.toFunction({
       defined: defined,
       varint: varint,
-      enc: enc
+      enc: dedupEnc
     })
 
     // compile encode
@@ -293,7 +301,7 @@ module.exports = function (schema, extraEncodings) {
           ('var packedLen = 0')
           ('for (var i = 0; i < %s.length; i++) {', val)
             ('if (!defined(%s)) continue', val + '[i]')
-            ('packedLen += enc[%d].encodingLength(%s)', i, val + '[i]')
+            ('packedLen += enc[%d].encodingLength(%s)', dedupIndex[i], val + '[i]')
           ('}')
 
         encode('if (packedLen) {')
@@ -312,12 +320,12 @@ module.exports = function (schema, extraEncodings) {
       if (!packed) for (j = 0; j < h.length; j++) encode('buf[offset++] = %d', h[j])
 
       if (e.message) {
-        encode('varint.encode(enc[%d].encodingLength(%s), buf, offset)', i, val)
+        encode('varint.encode(enc[%d].encodingLength(%s), buf, offset)', dedupIndex[i], val)
         encode('offset += varint.encode.bytes')
       }
 
-      encode('enc[%d].encode(%s, buf, offset)', i, val)
-      encode('offset += enc[%d].encode.bytes', i)
+      encode('enc[%d].encode(%s, buf, offset)', dedupIndex[i], val)
+      encode('offset += enc[%d].encode.bytes', dedupIndex[i])
 
       if (f.repeated) encode('}')
       if (!f.required) encode('}')
@@ -332,7 +340,7 @@ module.exports = function (schema, extraEncodings) {
       encodingLength: encodingLength,
       defined: defined,
       varint: varint,
-      enc: enc,
+      enc: dedupEnc,
       Buffer: Buffer
     })
 
@@ -422,22 +430,22 @@ module.exports = function (schema, extraEncodings) {
         decode('var len = varint.decode(buf, offset)')
         decode('offset += varint.decode.bytes')
         if (f.map) {
-          decode('var tmp = enc[%d].decode(buf, offset, offset + len)', i)
+          decode('var tmp = enc[%d].decode(buf, offset, offset + len)', dedupIndex[i])
           decode('%s[tmp.key] = tmp.value', val)
         } else if (f.repeated) {
-          decode('%s.push(enc[%d].decode(buf, offset, offset + len))', val, i)
+          decode('%s.push(enc[%d].decode(buf, offset, offset + len))', val, dedupIndex[i])
         } else {
-          decode('%s = enc[%d].decode(buf, offset, offset + len)', val, i)
+          decode('%s = enc[%d].decode(buf, offset, offset + len)', val, dedupIndex[i])
         }
       } else {
         if (f.repeated) {
-          decode('%s.push(enc[%d].decode(buf, offset))', val, i)
+          decode('%s.push(enc[%d].decode(buf, offset))', val, dedupIndex[i])
         } else {
-          decode('%s = enc[%d].decode(buf, offset)', val, i)
+          decode('%s = enc[%d].decode(buf, offset)', val, dedupIndex[i])
         }
       }
 
-      decode('offset += enc[%d].decode.bytes', i)
+      decode('offset += enc[%d].decode.bytes', dedupIndex[i])
 
       if (packed) decode('}')
       if (f.required) decode('found%d = true', i)
@@ -454,7 +462,7 @@ module.exports = function (schema, extraEncodings) {
     decode = decode.toFunction({
       varint: varint,
       skip: encodings.skip,
-      enc: enc
+      enc: dedupEnc
     })
 
     // end of compilation - return all the things
@@ -465,7 +473,7 @@ module.exports = function (schema, extraEncodings) {
     exports.encode = encode
     exports.decode = decode
     exports.encodingLength = encodingLength
-    exports.dependencies = enc
+    exports.dependencies = dedupEnc
 
     return exports
   }
