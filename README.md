@@ -74,6 +74,33 @@ var buf = message.SomeMessage.encode({
 See the [Google Protocol Buffers docs](https://developers.google.com/protocol-buffers/) for more information about the
 available types etc.
 
+## Compile to a file
+
+Since v4 you can now compile your schemas to a JavaScript file you can require from Node.
+This means you do not have runtime parse the schemas, which is useful if using in the browser or on embedded devices.
+It also makes the dependency footprint a lot smaller.
+
+``` sh
+# first install the cli tool
+npm install -g protocol-buffers
+
+# compile the schema
+protocol-buffers test.proto -o messages.js
+
+# then install the runtime dependency in the project
+npm install --save protocol-buffers-encodings
+```
+
+That's it! Then in your application you can simply do
+
+``` js
+var messages = require('./messages')
+
+var buf = messages.Test.encode({
+  num: 42
+})
+```
+
 ## Performance
 
 This module is fast.
