@@ -2,7 +2,7 @@
 /* eslint-disable no-unexpected-multiline */
 /* eslint-disable func-call-spacing */
 
-var encodings = require('./encodings')
+var encodings = require('protocol-buffers-encodings')
 var varint = require('varint')
 var genobj = require('generate-object-property')
 var genfun = require('generate-function')

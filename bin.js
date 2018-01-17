@@ -1,14 +1,14 @@
 #!/usr/bin/env node
 
 var protobuf = require('./')
-var encodings = require('./encodings')
+var encodings = require('protocol-buffers-encodings')
 var fs = require('fs')
 var os = require('os')
 
 var messages = protobuf(fs.readFileSync(process.argv[2]))
 var out = ''
 
-out += 'var encodings = require(\'protocol-buffers/encodings\')' + os.EOL
+out += 'var encodings = require(\'protocol-buffers-encodings\')' + os.EOL
 out += 'var varint = encodings.varint' + os.EOL
 out += os.EOL
 out += '/* eslint-disable quotes */' + os.EOL
