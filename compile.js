@@ -1,6 +1,8 @@
 /* eslint-disable no-spaced-func */
 /* eslint-disable no-unexpected-multiline */
-var encodings = require('./encodings')
+/* eslint-disable func-call-spacing */
+
+var encodings = require('protocol-buffers-encodings')
 var varint = require('varint')
 var genobj = require('generate-object-property')
 var genfun = require('generate-function')
@@ -14,31 +16,7 @@ var flatten = function (values) {
   return result
 }
 
-var skip = function (type, buffer, offset) {
-  switch (type) {
-    case 0:
-      varint.decode(buffer, offset)
-      return offset + varint.decode.bytes
-
-    case 1:
-      return offset + 8
-
-    case 2:
-      var len = varint.decode(buffer, offset)
-      return offset + varint.decode.bytes + len
-
-    case 3:
-    case 4:
-      throw new Error('Groups are not supported')
-
-    case 5:
-      return offset + 4
-  }
-
-  throw new Error('Unknown wire type: ' + type)
-}
-
-var defined = function (val) {
+var defined = function defined (val) {
   return val !== null && val !== undefined && (typeof val !== 'number' || !isNaN(val))
 }
 
@@ -278,7 +256,7 @@ module.exports = function (schema, extraEncodings) {
     var encode = genfun()
       ('function encode (obj, buf, offset) {')
         ('if (!offset) offset = 0')
-        ('if (!buf) buf = new Buffer(encodingLength(obj))')
+        ('if (!buf) buf = Buffer.allocUnsafe(encodingLength(obj))')
         ('var oldOffset = offset')
 
     Object.keys(oneofs).forEach(function (name) {
@@ -475,7 +453,7 @@ module.exports = function (schema, extraEncodings) {
 
     decode = decode.toFunction({
       varint: varint,
-      skip: skip,
+      skip: encodings.skip,
       enc: enc
     })
 
@@ -487,6 +465,7 @@ module.exports = function (schema, extraEncodings) {
     exports.encode = encode
     exports.decode = decode
     exports.encodingLength = encodingLength
+    exports.dependencies = enc
 
     return exports
   }
@@ -508,10 +487,15 @@ module.exports = function (schema, extraEncodings) {
     if (!m) throw new Error('Could not resolve ' + name)
 
     if (m.values) return compileEnum(m)
-    return cache[m.id] || compileMessage(m, cache[m.id] = {})
+    if (cache[m.id]) return cache[m.id]
+
+    cache[m.id] = {}
+    return compileMessage(m, cache[m.id])
   }
 
   return (schema.enums || []).concat((schema.messages || []).map(function (message) {
     return resolve(message.id)
   }))
 }
+
+module.exports.defined = defined

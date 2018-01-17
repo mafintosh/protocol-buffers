@@ -1,6 +1,7 @@
 var protobuf = require('../')
 var fs = require('fs')
-var messages = protobuf(fs.readFileSync(__dirname + '/bench.proto'))
+var path = require('path')
+var messages = protobuf(fs.readFileSync(path.join(__dirname, 'bench.proto')))
 
 var TIMES = 1000000
 
@@ -11,7 +12,7 @@ var run = function (name, encode, decode) {
   var EXAMPLE = {
     foo: 'hello',
     hello: 42,
-    payload: new Buffer('a'),
+    payload: Buffer.from('a'),
     meh: {
       b: {
         tmp: {

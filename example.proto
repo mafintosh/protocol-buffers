@@ -2,3 +2,7 @@ message Test {
   optional string foo = 1;
   required int32 num = 2;
 }
+
+message Nested {
+  repeated Test tests = 1;
+}

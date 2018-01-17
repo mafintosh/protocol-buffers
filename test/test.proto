@@ -37,8 +37,8 @@ message Float {
 }
 
 message Packed {
-  repeated Basic list = 1 [packed=true];
-  repeated string packed = 2 [packed=true];
+  repeated Basic list = 1;
+  repeated uint64 packed = 2;
 }
 
 message NotPacked {

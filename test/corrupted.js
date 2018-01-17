@@ -25,7 +25,7 @@ var messages = protobuf(protoStr)
 tape('invalid message decode', function (t) {
   var didFail = false
   try {
-    messages.ABC.decode(new Buffer([8, 182, 168, 235, 144, 178, 41]))
+    messages.ABC.decode(Buffer.from([8, 182, 168, 235, 144, 178, 41]))
   } catch (e) {
     didFail = true
   }
@@ -46,7 +46,7 @@ tape('non buffers should fail', function (t) {
 
 tape('protocol parser test case', function (t) {
   var didFail = false
-  var buf = new Buffer('cec1', 'hex')
+  var buf = Buffer.from('cec1', 'hex')
   try {
     messages.Open.decode(buf)
   } catch (err) {
