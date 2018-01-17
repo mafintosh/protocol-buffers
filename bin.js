@@ -43,10 +43,10 @@ if (!output) {
 } else {
   write()
   if (watch) fs.watch(filename, write)
+}
 
-  function write () {
-    fs.writeFileSync(output, compile())
-  }
+function write () {
+  fs.writeFileSync(output, compile())
 }
 
 function compile () {
