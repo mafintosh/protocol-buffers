@@ -16,30 +16,6 @@ var flatten = function (values) {
   return result
 }
 
-var skip = function skip (type, buffer, offset) {
-  switch (type) {
-    case 0:
-      varint.decode(buffer, offset)
-      return offset + varint.decode.bytes
-
-    case 1:
-      return offset + 8
-
-    case 2:
-      var len = varint.decode(buffer, offset)
-      return offset + varint.decode.bytes + len
-
-    case 3:
-    case 4:
-      throw new Error('Groups are not supported')
-
-    case 5:
-      return offset + 4
-  }
-
-  throw new Error('Unknown wire type: ' + type)
-}
-
 var defined = function defined (val) {
   return val !== null && val !== undefined && (typeof val !== 'number' || !isNaN(val))
 }
@@ -477,7 +453,7 @@ module.exports = function (schema, extraEncodings) {
 
     decode = decode.toFunction({
       varint: varint,
-      skip: skip,
+      skip: encodings.skip,
       enc: enc
     })
 
@@ -523,4 +499,3 @@ module.exports = function (schema, extraEncodings) {
 }
 
 module.exports.defined = defined
-module.exports.skip = skip
