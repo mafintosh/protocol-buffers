@@ -24,7 +24,7 @@
   "scripts": {
     "test": "standard && npm run test-generated && npm run test-compiled",
     "test-generated": "tape test/*.js",
-    "test-compiled": "protocol-buffers test/test.proto -o test/helpers/compiled.js && COMPILED=true tape test/*.js",
+    "test-compiled": "./bin.js test/test.proto -o test/helpers/compiled.js && COMPILED=true tape test/*.js",
     "bench": "node bench"
   },
   "bugs": {
