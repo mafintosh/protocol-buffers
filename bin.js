@@ -93,7 +93,7 @@ function compile () {
     })
 
     enums.forEach(function (name) {
-      out += spaces + 'var ' + name + ' = ' + exports + '.' + name + ' = ' +
+      out += spaces + exports + '.' + name + ' = ' +
         JSON.stringify(messages[name], null, 2).replace(/\n/g, os.EOL) + os.EOL + os.EOL
     })
 
