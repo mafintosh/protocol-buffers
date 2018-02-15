@@ -1,8 +1,5 @@
 var tape = require('tape')
-var fs = require('fs')
-var path = require('path')
-var protobuf = require('../')
-var Nested = protobuf(fs.readFileSync(path.join(__dirname, 'test.proto'))).Nested
+var Nested = require('./helpers/messages').Nested
 
 tape('nested encode', function (t) {
   var b1 = Nested.encode({

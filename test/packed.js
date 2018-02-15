@@ -1,8 +1,5 @@
 var tape = require('tape')
-var fs = require('fs')
-var path = require('path')
-var protobuf = require('../')
-var Packed = protobuf(fs.readFileSync(path.join(__dirname, 'test.proto'))).Packed
+var Packed = require('./helpers/messages').Packed
 
 tape('Packed encode', function (t) {
   var b1 = Packed.encode({
