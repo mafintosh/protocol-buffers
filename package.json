@@ -22,7 +22,7 @@
     "protocol-buffers": "./bin.js"
   },
   "scripts": {
-    "test": "standard && tape test/*.js",
+    "test": "standard && ./bin.js test/test.proto -o test/test.proto.js && tape test/*.js",
     "bench": "node bench"
   },
   "bugs": {
@@ -47,6 +47,11 @@
     "encodings",
     "encoding"
   ],
+  "standard": {
+    "ignore": [
+      "test/test.proto.js"
+    ]
+  },
   "author": "Mathias Buus",
   "license": "MIT"
 }
