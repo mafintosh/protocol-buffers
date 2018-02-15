@@ -17,3 +17,11 @@ tape('hex enums', function (t) {
   t.same(e, {A: 1, B: 2}, 'enum is defined using hex')
   t.end()
 })
+
+tape('enums in compiled output', function (t) {
+  var messages = require('./test.proto.js')
+  var doc = {num: 1, foo1: messages.FOO.A, foo2: messages.FOO.B, foos: [messages.FOO.B]}
+  var buf = messages.Defaults.encode(doc)
+  t.same(messages.Defaults.decode(buf), doc)
+  t.end()
+})
