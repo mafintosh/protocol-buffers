@@ -122,6 +122,7 @@ function compile () {
       messages[name].dependencies.forEach(function (e, i, enc) {
         var name = encodings.name(e)
         if (name) name = 'encodings.' + name
+        else if (!e.name) name = 'encodings.enum'
         else name = e.name
         out += spaces + '    ' + name + (i < enc.length - 1 ? ',' : '') + os.EOL
       })
