@@ -59,6 +59,15 @@ var defaultValue = function (f, def) {
   }
 }
 
+var unique = function () {
+  var seen = {}
+  return function (key) {
+    if (seen.hasOwnProperty(key)) return false
+    seen[key] = true
+    return true
+  }
+}
+
 module.exports = function (schema, extraEncodings) {
   var messages = {}
   var enums = {}
@@ -358,6 +367,7 @@ module.exports = function (schema, extraEncodings) {
     var decode = genfun()
 
     var objectKeys = []
+
     forEach(function (e, f) {
       var def = f.options && f.options.default
       var resolved = resolve(f.type, m.id, false)
@@ -375,6 +385,8 @@ module.exports = function (schema, extraEncodings) {
 
       objectKeys.push(genobj.property(f.name) + ': ' + defaultValue(f, def))
     })
+
+    objectKeys = objectKeys.filter(unique())
 
     decode()
       ('function decode (buf, offset, end) {')

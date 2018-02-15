@@ -72,6 +72,7 @@ function compile () {
   out += '/* eslint-disable quotes */' + os.EOL
   out += '/* eslint-disable indent */' + os.EOL
   out += '/* eslint-disable no-redeclare */' + os.EOL
+  out += '/* eslint-disable camelcase */' + os.EOL
   out += os.EOL
   out += '// Remember to `npm install --save protocol-buffers-encodings`' + os.EOL
   out += 'var encodings = require(\'protocol-buffers-encodings\')' + os.EOL
