@@ -101,6 +101,16 @@ var buf = messages.Test.encode({
 })
 ```
 
+The compilation functionality is also available as a JavaScript API for programmatic use:
+
+``` js
+var protobuf = require('protocol-buffers')
+
+// protobuf.toJS() takes the same arguments as protobuf()
+var js = protobuf.toJS(fs.readFileSync('test.proto'))
+fs.writeFileSync('messages.js', js)
+```
+
 ## Performance
 
 This module is fast.
