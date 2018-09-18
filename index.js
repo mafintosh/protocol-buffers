@@ -1,6 +1,6 @@
 var schema = require('protocol-buffers-schema')
 var compile = require('./compile')
-var compiletojs = require('./compiletojs')
+var compileToJS = require('./compile-to-js')
 
 var flatten = function (values) {
   if (!values) return null
@@ -38,5 +38,5 @@ module.exports = function (proto, opts) {
 }
 
 module.exports.toJS = function (proto) {
-  return compiletojs(module.exports(proto))
+  return compileToJS(module.exports(proto))
 }
