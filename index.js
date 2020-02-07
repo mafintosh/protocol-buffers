@@ -21,7 +21,7 @@ module.exports = function (proto, opts) {
   var Messages = function () {
     var self = this
 
-    compile(sch, opts.encodings || {}).forEach(function (m) {
+    compile(sch, opts.encodings || {}, opts.inlineEnc).forEach(function (m) {
       self[m.name] = flatten(m.values) || m
     })
   }
@@ -38,5 +38,5 @@ module.exports = function (proto, opts) {
 }
 
 module.exports.toJS = function (proto) {
-  return compileToJS(module.exports(proto))
+  return compileToJS(module.exports(proto, { inlineEnc: true }))
 }

@@ -1,4 +1,3 @@
-var encodings = require('protocol-buffers-encodings')
 var os = require('os')
 
 var RESERVED = {
@@ -70,17 +69,7 @@ function compile (messages) {
       out += spaces + 'function define' + name + ' () {' + os.EOL
 
       visit(messages[name], name, spaces + '  ')
-      out += spaces + '  var enc = [' + os.EOL
 
-      messages[name].dependencies.forEach(function (e, i, enc) {
-        var name = encodings.name(e)
-        if (name) name = 'encodings.' + name
-        else if (!e.name) name = 'encodings.enum'
-        else name = e.name
-        out += spaces + '    ' + name + (i < enc.length - 1 ? ',' : '') + os.EOL
-      })
-
-      out += spaces + '  ]' + os.EOL + os.EOL
       out += spaces + '  ' + name + '.encodingLength = encodingLength' + os.EOL
       out += spaces + '  ' + name + '.encode = encode' + os.EOL
       out += spaces + '  ' + name + '.decode = decode' + os.EOL + os.EOL

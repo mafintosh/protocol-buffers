@@ -68,10 +68,22 @@ var unique = function () {
   }
 }
 
-module.exports = function (schema, extraEncodings) {
+var encName = function (e) {
+  var name = encodings.name(e)
+  if (name) name = 'encodings.' + name
+  else if (!e.name) name = 'encodings.enum'
+  else name = e.name
+  return name
+}
+
+module.exports = function (schema, extraEncodings, inlineEnc) {
   var messages = {}
   var enums = {}
   var cache = {}
+
+  var encString = function (idx, encs) {
+    return inlineEnc ? encName(encs[idx]) : 'enc[' + idx + ']'
+  }
 
   var visit = function (schema, prefix) {
     if (schema.enums) {
@@ -233,7 +245,7 @@ module.exports = function (schema, extraEncodings) {
           ('var packedLen = 0')
           ('for (var i = 0; i < %s.length; i++) {', val)
             ('if (!defined(%s)) continue', val + '[i]')
-            ('var len = enc[%d].encodingLength(%s)', dedupIndex[i], val + '[i]')
+            ('var len = %s.encodingLength(%s)', encString(dedupIndex[i], dedupEnc), val + '[i]')
             ('packedLen += len')
 
         if (e.message) encodingLength('packedLen += varint.encodingLength(len)')
@@ -249,7 +261,7 @@ module.exports = function (schema, extraEncodings) {
           encodingLength('if (!defined(%s)) continue', val)
         }
 
-        encodingLength('var len = enc[%d].encodingLength(%s)', dedupIndex[i], val)
+        encodingLength('var len = %s.encodingLength(%s)', encString(dedupIndex[i], dedupEnc), val)
         if (e.message) encodingLength('length += varint.encodingLength(len)')
         encodingLength('length += %d + len', hl)
         if (f.repeated) encodingLength('}')
@@ -310,7 +322,7 @@ module.exports = function (schema, extraEncodings) {
           ('var packedLen = 0')
           ('for (var i = 0; i < %s.length; i++) {', val)
             ('if (!defined(%s)) continue', val + '[i]')
-            ('packedLen += enc[%d].encodingLength(%s)', dedupIndex[i], val + '[i]')
+            ('packedLen += %s.encodingLength(%s)', encString(dedupIndex[i], dedupEnc), val + '[i]')
           ('}')
 
         encode('if (packedLen) {')
@@ -329,12 +341,12 @@ module.exports = function (schema, extraEncodings) {
       if (!packed) for (j = 0; j < h.length; j++) encode('buf[offset++] = %d', h[j])
 
       if (e.message) {
-        encode('varint.encode(enc[%d].encodingLength(%s), buf, offset)', dedupIndex[i], val)
+        encode('varint.encode(%s.encodingLength(%s), buf, offset)', encString(dedupIndex[i], dedupEnc), val)
         encode('offset += varint.encode.bytes')
       }
 
-      encode('enc[%d].encode(%s, buf, offset)', dedupIndex[i], val)
-      encode('offset += enc[%d].encode.bytes', dedupIndex[i])
+      encode('%s.encode(%s, buf, offset)', encString(dedupIndex[i], dedupEnc), val)
+      encode('offset += %s.encode.bytes', encString(dedupIndex[i], dedupEnc))
 
       if (f.repeated) encode('}')
       if (!f.required) encode('}')
@@ -442,22 +454,22 @@ module.exports = function (schema, extraEncodings) {
         decode('var len = varint.decode(buf, offset)')
         decode('offset += varint.decode.bytes')
         if (f.map) {
-          decode('var tmp = enc[%d].decode(buf, offset, offset + len)', dedupIndex[i])
+          decode('var tmp = %s.decode(buf, offset, offset + len)', encString(dedupIndex[i], dedupEnc))
           decode('%s[tmp.key] = tmp.value', val)
         } else if (f.repeated) {
-          decode('%s.push(enc[%d].decode(buf, offset, offset + len))', val, dedupIndex[i])
+          decode('%s.push(%s.decode(buf, offset, offset + len))', val, encString(dedupIndex[i], dedupEnc))
         } else {
-          decode('%s = enc[%d].decode(buf, offset, offset + len)', val, dedupIndex[i])
+          decode('%s = %s.decode(buf, offset, offset + len)', val, encString(dedupIndex[i], dedupEnc))
         }
       } else {
         if (f.repeated) {
-          decode('%s.push(enc[%d].decode(buf, offset))', val, dedupIndex[i])
+          decode('%s.push(%s.decode(buf, offset))', val, encString(dedupIndex[i], dedupEnc))
         } else {
-          decode('%s = enc[%d].decode(buf, offset)', val, dedupIndex[i])
+          decode('%s = %s.decode(buf, offset)', val, encString(dedupIndex[i], dedupEnc))
         }
       }
 
-      decode('offset += enc[%d].decode.bytes', dedupIndex[i])
+      decode('offset += %s.decode.bytes', encString(dedupIndex[i], dedupEnc))
 
       if (packed) decode('}')
       if (f.required) decode('found%d = true', i)
