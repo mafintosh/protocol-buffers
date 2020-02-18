@@ -33,6 +33,24 @@ function compile (messages) {
 
   visit(messages, 'exports', '')
 
+  function stringifyEnum (map, spaces) {
+    const keys = Object.keys(map)
+    const safe = keys.every(function (k) {
+      if (typeof map[k] !== 'number') return false
+      return /^[a-z][a-z0-9]+$/i.test(k)
+    })
+
+    if (!safe) return JSON.stringify(map, null, 2).replace(/\n/g, os.EOL) + os.EOL
+
+    var out = '{' + os.EOL
+
+    keys.forEach(function (k, i) {
+      out += spaces + '  ' + k + ': ' + map[k] + (i < keys.length - 1 ? ',' : '') + os.EOL
+    })
+
+    return out + spaces + '}' + os.EOL
+  }
+
   function visit (messages, exports, spaces) {
     var encoders = Object.keys(messages).filter(function (name) {
       if (RESERVED[name]) return false
@@ -46,7 +64,7 @@ function compile (messages) {
 
     enums.forEach(function (name) {
       out += spaces + exports + '.' + name + ' = ' +
-        JSON.stringify(messages[name], null, 2).replace(/\n/g, os.EOL) + os.EOL + os.EOL
+        stringifyEnum(messages[name], spaces) + os.EOL
     })
 
     encoders.forEach(function (name) {
