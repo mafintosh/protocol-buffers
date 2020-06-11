@@ -37,6 +37,6 @@ module.exports = function (proto, opts) {
   return new Messages()
 }
 
-module.exports.toJS = function (proto) {
-  return compileToJS(module.exports(proto, { inlineEnc: true }))
+module.exports.toJS = function (proto, opts) {
+  return compileToJS(module.exports(proto, { inlineEnc: true }), opts)
 }

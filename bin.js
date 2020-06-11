@@ -5,6 +5,7 @@ var fs = require('fs')
 var filename = null
 var output = null
 var watch = false
+var encodings = null
 
 // handrolled parser to not introduce minimist as this is used a bunch of prod places
 // TODO: if this becomes more complicated / has bugs, move to minimist
@@ -18,6 +19,8 @@ for (var i = 2; i < process.argv.length; i++) {
     output = v === n ? process.argv[++i] : v.split('=').slice(1).join('=')
   } else if (n === '--watch' || n === '-w') {
     watch = true
+  } else if (n === '--encodings' || n === '-e') {
+    encodings = v === n ? process.argv[++i] : v.split('=').slice(1).join('=')
   }
 }
 
@@ -47,5 +50,5 @@ function write () {
 }
 
 function compile () {
-  return protobuf.toJS(fs.readFileSync(filename))
+  return protobuf.toJS(fs.readFileSync(filename), { encodings })
 }
