@@ -60,6 +60,8 @@ message Defaults {
   optional FOO foo1 = 2 [default = B];
   optional FOO foo2 = 3;
   repeated FOO foos = 4;
+  optional float float_value = 5 [default = 4.932];
+  optional double double_value = 6 [default = 1.2322];
 }
 
 
@@ -106,4 +108,22 @@ message ComplexProperty {
     int32 int_value = 9;
     string string_value = 10;
   }
+}
+
+message Optional {
+  optional sint32 sint32 = 1;
+  optional sint64 sint64 = 2;
+  optional int32 int32 = 3;
+  optional uint32 uint32 = 4;
+  optional int64 int64 = 5;
+  optional float float = 6;
+  optional double double = 7;
+  optional string string = 8;
+  optional bool bool = 9;
+
+  optional int32 int32_default = 10 [default = 46];
+  optional float float_default = 11 [default = 4.932];
+  optional double double_default = 12 [default = 1.2322];
+  optional string string_default = 13 [default = "foo"];
+  optional bool bool_default = 14 [default = true];
 }

@@ -15,6 +15,7 @@
     "varint": "^5.0.0"
   },
   "devDependencies": {
+    "benchmark": "^1.0.0",
     "standard": "^10.0.3",
     "tape": "^4.8.0"
   },
