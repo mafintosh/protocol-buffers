@@ -1,2 +1,3 @@
 node_modules
 test/helpers/compiled.js
+test/helpers/imports.js

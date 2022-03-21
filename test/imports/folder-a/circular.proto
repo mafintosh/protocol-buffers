@@ -1,0 +1,5 @@
+import "test/imports/invalid.proto";
+
+message Circular {
+  required int32 num = 1;
+}

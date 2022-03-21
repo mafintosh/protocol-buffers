@@ -1,0 +1,5 @@
+import "test/imports/folder-a/circular.proto";
+
+message Invalid {
+  required int32 num = 1;
+}
