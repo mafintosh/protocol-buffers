@@ -6,7 +6,7 @@
 npm install protocol-buffers
 ```
 
-[![build status](https://travis-ci.org/mafintosh/protocol-buffers.svg?branch=master)](https://travis-ci.org/mafintosh/protocol-buffers)
+[![build status](https://github.com/mafintosh/protocol-buffers/actions/workflows/test.yml/badge.svg)](https://github.com/mafintosh/protocol-buffers/actions/workflows/test.yml)
 ![dat](http://img.shields.io/badge/Development%20sponsored%20by-dat-green.svg?style=flat)
 
 ## Usage
