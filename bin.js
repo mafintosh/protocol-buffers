@@ -1,17 +1,17 @@
 #!/usr/bin/env node
-var protobuf = require('./')
-var fs = require('fs')
+const protobuf = require('./')
+const fs = require('fs')
 
-var filename = null
-var output = null
-var watch = false
-var encodings = null
+let filename = null
+let output = null
+let watch = false
+let encodings = null
 
 // handrolled parser to not introduce minimist as this is used a bunch of prod places
 // TODO: if this becomes more complicated / has bugs, move to minimist
-for (var i = 2; i < process.argv.length; i++) {
-  var v = process.argv[i]
-  var n = v.split('=')[0]
+for (let i = 2; i < process.argv.length; i++) {
+  const v = process.argv[i]
+  const n = v.split('=')[0]
   if (v[0] !== '-') {
     filename = v
   } else if (n === '--output' || n === '-o' || n === '-wo') {

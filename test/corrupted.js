@@ -1,7 +1,7 @@
-var tape = require('tape')
-var protobuf = require('../')
+const tape = require('tape')
+const protobuf = require('../')
 
-var protoStr = 'enum AbcType {\n' +
+const protoStr = 'enum AbcType {\n' +
   '  IGNORE                 =  0;\n' +
   '  ACK_CONFIRMATION_TOKEN =  1;\n' +
   '}\n' +
@@ -20,10 +20,10 @@ var protoStr = 'enum AbcType {\n' +
   '  required bytes nonce = 2;\n' +
   '}'
 
-var messages = protobuf(protoStr)
+const messages = protobuf(protoStr)
 
 tape('invalid message decode', function (t) {
-  var didFail = false
+  let didFail = false
   try {
     messages.ABC.decode(Buffer.from([8, 182, 168, 235, 144, 178, 41]))
   } catch (e) {
@@ -34,7 +34,7 @@ tape('invalid message decode', function (t) {
 })
 
 tape('non buffers should fail', function (t) {
-  var didFail = false
+  let didFail = false
   try {
     messages.ABC.decode({})
   } catch (e) {
@@ -45,8 +45,8 @@ tape('non buffers should fail', function (t) {
 })
 
 tape('protocol parser test case', function (t) {
-  var didFail = false
-  var buf = Buffer.from('cec1', 'hex')
+  let didFail = false
+  const buf = Buffer.from('cec1', 'hex')
   try {
     messages.Open.decode(buf)
   } catch (err) {

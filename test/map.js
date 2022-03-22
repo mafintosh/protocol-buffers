@@ -1,26 +1,26 @@
-var tape = require('tape')
-var Map = require('./helpers/messages').Map
+const tape = require('tape')
+const Map = require('./helpers/messages').Map
 
 tape('map encode + decode', function (t) {
-  var b1 = Map.encode({
+  const b1 = Map.encode({
     foo: {
       hello: 'world'
     }
   })
 
-  var o1 = Map.decode(b1)
+  const o1 = Map.decode(b1)
 
-  t.same(o1.foo, {hello: 'world'})
+  t.same(o1.foo, { hello: 'world' })
 
-  var doc = {
+  const doc = {
     foo: {
       hello: 'world',
       hi: 'verden'
     }
   }
 
-  var b2 = Map.encode(doc)
-  var o2 = Map.decode(b2)
+  const b2 = Map.encode(doc)
+  const o2 = Map.decode(b2)
 
   t.same(o2, doc)
   t.end()

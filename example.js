@@ -1,15 +1,15 @@
-var protobuf = require('./')
-var fs = require('fs')
-var path = require('path')
+const protobuf = require('./')
+const fs = require('fs')
+const path = require('path')
 
-var messages = protobuf(fs.readFileSync(path.join(__dirname, 'example.proto')))
+const messages = protobuf(fs.readFileSync(path.join(__dirname, 'example.proto')))
 
-var ex = {
+const ex = {
   foo: 'hello world',
   num: 42
 }
 
-var buf = messages.Test.encode(ex)
+const buf = messages.Test.encode(ex)
 
 console.log('test message', ex)
 console.log('encoded test message', buf)

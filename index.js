@@ -1,10 +1,10 @@
-var schema = require('protocol-buffers-schema')
-var compile = require('./compile')
-var compileToJS = require('./compile-to-js')
+const schema = require('protocol-buffers-schema')
+const compile = require('./compile')
+const compileToJS = require('./compile-to-js')
 
-var flatten = function (values) {
+const flatten = function (values) {
   if (!values) return null
-  var result = {}
+  const result = {}
   Object.keys(values).forEach(function (k) {
     result[k] = values[k].value
   })
@@ -15,11 +15,11 @@ module.exports = function (proto, opts) {
   if (!opts) opts = {}
   if (!proto) throw new Error('Pass in a .proto string or a protobuf-schema parsed object')
 
-  var sch = (typeof proto === 'object' && !Buffer.isBuffer(proto)) ? proto : schema.parse(proto)
+  const sch = (typeof proto === 'object' && !Buffer.isBuffer(proto)) ? proto : schema.parse(proto)
 
   // to not make toString,toJSON enumarable we make a fire-and-forget prototype
-  var Messages = function () {
-    var self = this
+  const Messages = function () {
+    const self = this
 
     compile(sch, opts.encodings || {}, opts.inlineEnc).forEach(function (m) {
       self[m.name] = flatten(m.values) || m
