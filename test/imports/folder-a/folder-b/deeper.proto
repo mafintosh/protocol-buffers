@@ -1,0 +1,6 @@
+import "test/imports/folder-a/deepest.proto";
+
+message Deeper {
+  required DeepestMessage foo = 1;
+  required DeepestEnum bar = 2;
+}

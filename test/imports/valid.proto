@@ -1,0 +1,6 @@
+import "test/imports/folder-a/folder-b/deeper.proto";
+import "test/imports/folder-a/folder-b/deeper2.proto";
+
+message Valid {
+  required Deeper ext = 1;
+}

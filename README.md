@@ -111,6 +111,28 @@ var js = protobuf.toJS(fs.readFileSync('test.proto'))
 fs.writeFileSync('messages.js', js)
 ```
 
+## Imports
+
+The cli tool supports protocol buffer [imports][] by default.
+
+**Currently all imports are treated as public and the public/weak keywords
+not supported.**
+
+To use it programmatically you need to pass-in a `filename` & a `resolveImport`
+hooks:
+
+```js
+var protobuf = require('protocol-buffers')
+var messages = protobuf(null, {
+  filename: 'initial.proto',
+  resolveImport (filename) {
+    // can return a Buffer, String or Schema
+  }
+})
+```
+
+[imports]: https://developers.google.com/protocol-buffers/docs/proto3#importing_definitions
+
 ## Performance
 
 This module is fast.

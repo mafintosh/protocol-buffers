@@ -1,0 +1,7 @@
+// This is added to check cache when two different files
+// reference the same deep file.
+import "test/imports/folder-a/deepest.proto";
+
+message Deeper2 {
+  required DeepestMessage foo = 1;
+}
