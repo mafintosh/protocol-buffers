@@ -1,8 +1,8 @@
-var tape = require('tape')
-var Integers = require('./helpers/messages').Integers
+const tape = require('tape')
+const Integers = require('./helpers/messages').Integers
 
 tape('integers encode + decode', function (t) {
-  var b1 = Integers.encode({
+  const b1 = Integers.encode({
     sint32: 1,
     sint64: 2,
     int32: 3,
@@ -10,7 +10,7 @@ tape('integers encode + decode', function (t) {
     int64: 5
   })
 
-  var o1 = Integers.decode(b1)
+  const o1 = Integers.decode(b1)
 
   t.same(o1, {
     sint32: 1,
@@ -24,7 +24,7 @@ tape('integers encode + decode', function (t) {
 })
 
 tape('integers encode + decode + negative', function (t) {
-  var b1 = Integers.encode({
+  const b1 = Integers.encode({
     sint32: -1,
     sint64: -2,
     int32: -3,
@@ -32,7 +32,7 @@ tape('integers encode + decode + negative', function (t) {
     int64: -1 * Math.pow(2, 52) - 5
   })
 
-  var o1 = Integers.decode(b1)
+  const o1 = Integers.decode(b1)
 
   t.same(o1, {
     sint32: -1,

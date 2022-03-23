@@ -12,11 +12,11 @@
     "protocol-buffers-encodings": "^1.1.0",
     "protocol-buffers-schema": "^3.1.1",
     "signed-varint": "^2.0.0",
-    "varint": "^5.0.0"
+    "varint": "^6.0.0"
   },
   "devDependencies": {
-    "standard": "^10.0.3",
-    "tape": "^4.8.0"
+    "standard": "^16.0.4",
+    "tape": "^5.5.2"
   },
   "bin": {
     "protocol-buffers": "./bin.js"

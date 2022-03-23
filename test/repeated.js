@@ -1,8 +1,8 @@
-var tape = require('tape')
-var Repeated = require('./helpers/messages').Repeated
+const tape = require('tape')
+const Repeated = require('./helpers/messages').Repeated
 
 tape('repeated encode', function (t) {
-  var b1 = Repeated.encode({
+  const b1 = Repeated.encode({
     list: [{
       num: 1,
       payload: Buffer.from('lol')
@@ -12,7 +12,7 @@ tape('repeated encode', function (t) {
     }]
   })
 
-  var b2 = Repeated.encode({
+  const b2 = Repeated.encode({
     list: [{
       num: 1,
       payload: Buffer.from('lol')
@@ -29,7 +29,7 @@ tape('repeated encode', function (t) {
 })
 
 tape('repeated encode + decode', function (t) {
-  var b1 = Repeated.encode({
+  const b1 = Repeated.encode({
     list: [{
       num: 1,
       payload: Buffer.from('lol')
@@ -39,7 +39,7 @@ tape('repeated encode + decode', function (t) {
     }]
   })
 
-  var o1 = Repeated.decode(b1)
+  const o1 = Repeated.decode(b1)
 
   t.same(o1.list.length, 2)
   t.same(o1.list[0].num, 1)
@@ -47,7 +47,7 @@ tape('repeated encode + decode', function (t) {
   t.same(o1.list[1].num, 2)
   t.same(o1.list[1].payload, Buffer.from('lol1'))
 
-  var b2 = Repeated.encode({
+  const b2 = Repeated.encode({
     list: [{
       num: 1,
       payload: Buffer.from('lol')
@@ -59,7 +59,7 @@ tape('repeated encode + decode', function (t) {
     meeh: 42
   })
 
-  var o2 = Repeated.decode(b2)
+  const o2 = Repeated.decode(b2)
 
   t.same(o2, o1)
   t.end()

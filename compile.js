@@ -1,26 +1,26 @@
-/* eslint-disable no-spaced-func */
 /* eslint-disable no-unexpected-multiline */
 /* eslint-disable func-call-spacing */
+/* eslint-disable indent */
 
-var encodings = require('protocol-buffers-encodings')
-var varint = require('varint')
-var genobj = require('generate-object-property')
-var genfun = require('generate-function')
+const encodings = require('protocol-buffers-encodings')
+const varint = require('varint')
+const genobj = require('generate-object-property')
+const genfun = require('generate-function')
 
-var flatten = function (values) {
+const flatten = function (values) {
   if (!values) return null
-  var result = {}
+  const result = {}
   Object.keys(values).forEach(function (k) {
     result[k] = values[k].value
   })
   return result
 }
 
-var defined = function defined (val) {
+const defined = function defined (val) {
   return val !== null && val !== undefined && (typeof val !== 'number' || !isNaN(val))
 }
 
-var isString = function (def) {
+const isString = function (def) {
   try {
     return !!def && typeof JSON.parse(def) === 'string'
   } catch (err) {
@@ -28,7 +28,7 @@ var isString = function (def) {
   }
 }
 
-var defaultValue = function (f, def) {
+const defaultValue = function (f, def) {
   if (f.map) return '{}'
   if (f.repeated) return '[]'
 
@@ -59,17 +59,17 @@ var defaultValue = function (f, def) {
   }
 }
 
-var unique = function () {
-  var seen = {}
+const unique = function () {
+  const seen = {}
   return function (key) {
-    if (seen.hasOwnProperty(key)) return false
+    if (Object.prototype.hasOwnProperty.call(seen, key)) return false
     seen[key] = true
     return true
   }
 }
 
-var encName = function (e) {
-  var name = encodings.name(e)
+const encName = function (e) {
+  let name = encodings.name(e)
   if (name) name = 'encodings.' + name
   else if (!e.name) name = 'encodings.enum'
   else name = e.name
@@ -77,15 +77,15 @@ var encName = function (e) {
 }
 
 module.exports = function (schema, extraEncodings, inlineEnc) {
-  var messages = {}
-  var enums = {}
-  var cache = {}
+  const messages = {}
+  const enums = {}
+  const cache = {}
 
-  var encString = function (idx, encs) {
+  const encString = function (idx, encs) {
     return inlineEnc ? encName(encs[idx]) : 'enc[' + idx + ']'
   }
 
-  var visit = function (schema, prefix) {
+  const visit = function (schema, prefix) {
     if (schema.enums) {
       schema.enums.forEach(function (e) {
         e.id = prefix + (prefix ? '.' : '') + e.name
@@ -100,8 +100,8 @@ module.exports = function (schema, extraEncodings, inlineEnc) {
         m.fields.forEach(function (f) {
           if (!f.map) return
 
-          var name = 'Map_' + f.map.from + '_' + f.map.to
-          var map = {
+          const name = 'Map_' + f.map.from + '_' + f.map.to
+          const map = {
             name: name,
             enums: [],
             messages: [],
@@ -136,8 +136,8 @@ module.exports = function (schema, extraEncodings, inlineEnc) {
 
   visit(schema, '')
 
-  var compileEnum = function (e) {
-    var conditions = Object.keys(e.values)
+  const compileEnum = function (e) {
+    let conditions = Object.keys(e.values)
       .map(function (k) {
         return 'val !== ' + parseInt(e.values[k].value, 10)
       })
@@ -145,7 +145,7 @@ module.exports = function (schema, extraEncodings, inlineEnc) {
 
     if (!conditions) conditions = 'true'
 
-    var encode = genfun()
+    const encode = genfun()
       ('function encode (val, buf, offset) {')
         ('if (%s) throw new Error("Invalid enum value: "+val)', conditions)
         ('varint.encode(val, buf, offset)')
@@ -156,7 +156,7 @@ module.exports = function (schema, extraEncodings, inlineEnc) {
         varint: varint
       })
 
-    var decode = genfun()
+    const decode = genfun()
       ('function decode (buf, offset) {')
         ('var val = varint.decode(buf, offset)')
         ('if (%s) throw new Error("Invalid enum value: "+val)', conditions)
@@ -170,7 +170,7 @@ module.exports = function (schema, extraEncodings, inlineEnc) {
     return encodings.make(0, encode, decode, varint.encodingLength)
   }
 
-  var compileMessage = function (m, exports) {
+  const compileMessage = function (m, exports) {
     m.messages.forEach(function (nested) {
       exports[nested.name] = resolve(nested.name, m.id)
     })
@@ -183,7 +183,7 @@ module.exports = function (schema, extraEncodings, inlineEnc) {
     exports.message = true
     exports.name = m.name
 
-    var oneofs = {}
+    const oneofs = {}
 
     m.fields.forEach(function (f) {
       if (!f.oneof) return
@@ -191,31 +191,31 @@ module.exports = function (schema, extraEncodings, inlineEnc) {
       oneofs[f.oneof].push(f.name)
     })
 
-    var enc = m.fields.map(function (f) {
+    const enc = m.fields.map(function (f) {
       return resolve(f.type, m.id)
     })
 
-    var dedupEnc = enc.filter(function (e, i) {
+    const dedupEnc = enc.filter(function (e, i) {
       return enc.indexOf(e) === i
     })
 
-    var dedupIndex = enc.map(function (e) {
+    const dedupIndex = enc.map(function (e) {
       return dedupEnc.indexOf(e)
     })
 
-    var forEach = function (fn) {
-      for (var i = 0; i < enc.length; i++) fn(enc[i], m.fields[i], genobj('obj', m.fields[i].name), i)
+    const forEach = function (fn) {
+      for (let i = 0; i < enc.length; i++) fn(enc[i], m.fields[i], genobj('obj', m.fields[i].name), i)
     }
 
     // compile encodingLength
 
-    var encodingLength = genfun()
+    let encodingLength = genfun()
       ('function encodingLength (obj) {')
         ('var length = 0')
 
     Object.keys(oneofs).forEach(function (name) {
-      var msg = JSON.stringify('only one of the properties defined in oneof ' + name + ' can be set')
-      var cnt = oneofs[name]
+      const msg = JSON.stringify('only one of the properties defined in oneof ' + name + ' can be set')
+      const cnt = oneofs[name]
         .map(function (prop) {
           return '+defined(' + genobj('obj', prop) + ')'
         })
@@ -225,8 +225,8 @@ module.exports = function (schema, extraEncodings, inlineEnc) {
     })
 
     forEach(function (e, f, val, i) {
-      var packed = f.repeated && f.options && f.options.packed && f.options.packed !== 'false'
-      var hl = varint.encodingLength(f.tag << 3 | e.type)
+      const packed = f.repeated && f.options && f.options.packed && f.options.packed !== 'false'
+      const hl = varint.encodingLength(f.tag << 3 | e.type)
 
       if (f.required) encodingLength('if (!defined(%s)) throw new Error(%s)', val, JSON.stringify(f.name + ' is required'))
       else encodingLength('if (defined(%s)) {', val)
@@ -282,15 +282,15 @@ module.exports = function (schema, extraEncodings, inlineEnc) {
 
     // compile encode
 
-    var encode = genfun()
+    let encode = genfun()
       ('function encode (obj, buf, offset) {')
         ('if (!offset) offset = 0')
         ('if (!buf) buf = Buffer.allocUnsafe(encodingLength(obj))')
         ('var oldOffset = offset')
 
     Object.keys(oneofs).forEach(function (name) {
-      var msg = JSON.stringify('only one of the properties defined in oneof ' + name + ' can be set')
-      var cnt = oneofs[name]
+      const msg = JSON.stringify('only one of the properties defined in oneof ' + name + ' can be set')
+      const cnt = oneofs[name]
         .map(function (prop) {
           return '+defined(' + genobj('obj', prop) + ')'
         })
@@ -303,10 +303,10 @@ module.exports = function (schema, extraEncodings, inlineEnc) {
       if (f.required) encode('if (!defined(%s)) throw new Error(%s)', val, JSON.stringify(f.name + ' is required'))
       else encode('if (defined(%s)) {', val)
 
-      var packed = f.repeated && f.options && f.options.packed && f.options.packed !== 'false'
-      var p = varint.encode(f.tag << 3 | 2)
-      var h = varint.encode(f.tag << 3 | e.type)
-      var j
+      const packed = f.repeated && f.options && f.options.packed && f.options.packed !== 'false'
+      const p = varint.encode(f.tag << 3 | 2)
+      const h = varint.encode(f.tag << 3 | e.type)
+      let j
 
       if (f.map) {
         encode()
@@ -367,7 +367,7 @@ module.exports = function (schema, extraEncodings, inlineEnc) {
 
     // compile decode
 
-    var invalid = m.fields
+    const invalid = m.fields
       .map(function (f, i) {
         return f.required && '!found' + i
       })
@@ -376,14 +376,14 @@ module.exports = function (schema, extraEncodings, inlineEnc) {
       })
       .join(' || ')
 
-    var decode = genfun()
+    let decode = genfun()
 
-    var objectKeys = []
+    let objectKeys = []
 
     forEach(function (e, f) {
-      var def = f.options && f.options.default
-      var resolved = resolve(f.type, m.id, false)
-      var vals = resolved && resolved.values
+      let def = f.options && f.options.default
+      const resolved = resolve(f.type, m.id, false)
+      const vals = resolved && resolved.values
 
       if (vals) { // is enum
         if (f.repeated) {
@@ -430,7 +430,7 @@ module.exports = function (schema, extraEncodings, inlineEnc) {
       ('switch (tag) {')
 
     forEach(function (e, f, val, i) {
-      var packed = f.repeated && f.options && f.options.packed && f.options.packed !== 'false'
+      const packed = f.repeated && f.options && f.options.packed && f.options.packed !== 'false'
 
       decode('case %d:', f.tag)
 
@@ -502,11 +502,11 @@ module.exports = function (schema, extraEncodings, inlineEnc) {
     return exports
   }
 
-  var resolve = function (name, from, compile) {
+  const resolve = function (name, from, compile) {
     if (extraEncodings && extraEncodings[name]) return extraEncodings[name]
     if (encodings[name]) return encodings[name]
 
-    var m = (from ? from + '.' + name : name).split('.')
+    const m = (from ? from + '.' + name : name).split('.')
       .map(function (part, i, list) {
         return list.slice(0, i).concat(name).join('.')
       })

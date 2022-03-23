@@ -1,8 +1,8 @@
-var tape = require('tape')
-var Packed = require('./helpers/messages').Packed
+const tape = require('tape')
+const Packed = require('./helpers/messages').Packed
 
 tape('Packed encode', function (t) {
-  var b1 = Packed.encode({
+  const b1 = Packed.encode({
     packed: [
       10,
       42,
@@ -10,7 +10,7 @@ tape('Packed encode', function (t) {
     ]
   })
 
-  var b2 = Packed.encode({
+  const b2 = Packed.encode({
     packed: [
       10,
       42,
@@ -24,7 +24,7 @@ tape('Packed encode', function (t) {
 })
 
 tape('Packed encode + decode', function (t) {
-  var b1 = Packed.encode({
+  const b1 = Packed.encode({
     packed: [
       10,
       42,
@@ -32,14 +32,14 @@ tape('Packed encode + decode', function (t) {
     ]
   })
 
-  var o1 = Packed.decode(b1)
+  const o1 = Packed.decode(b1)
 
   t.same(o1.packed.length, 3)
   t.same(o1.packed[0], 10)
   t.same(o1.packed[1], 42)
   t.same(o1.packed[2], 52)
 
-  var b2 = Packed.encode({
+  const b2 = Packed.encode({
     packed: [
       10,
       42,
@@ -48,14 +48,14 @@ tape('Packed encode + decode', function (t) {
     meeh: 42
   })
 
-  var o2 = Packed.decode(b2)
+  const o2 = Packed.decode(b2)
 
   t.same(o2, o1)
   t.end()
 })
 
 tape('packed message encode', function (t) {
-  var b1 = Packed.encode({
+  const b1 = Packed.encode({
     list: [{
       num: 1,
       payload: Buffer.from('lol')
@@ -65,7 +65,7 @@ tape('packed message encode', function (t) {
     }]
   })
 
-  var b2 = Packed.encode({
+  const b2 = Packed.encode({
     list: [{
       num: 1,
       payload: Buffer.from('lol')
@@ -82,7 +82,7 @@ tape('packed message encode', function (t) {
 })
 
 tape('packed message encode + decode', function (t) {
-  var b1 = Packed.encode({
+  const b1 = Packed.encode({
     list: [{
       num: 1,
       payload: Buffer.from('lol')
@@ -92,7 +92,7 @@ tape('packed message encode + decode', function (t) {
     }]
   })
 
-  var o1 = Packed.decode(b1)
+  const o1 = Packed.decode(b1)
 
   t.same(o1.list.length, 2)
   t.same(o1.list[0].num, 1)
@@ -100,7 +100,7 @@ tape('packed message encode + decode', function (t) {
   t.same(o1.list[1].num, 2)
   t.same(o1.list[1].payload, Buffer.from('lol1'))
 
-  var b2 = Packed.encode({
+  const b2 = Packed.encode({
     list: [{
       num: 1,
       payload: Buffer.from('lol')
@@ -112,7 +112,7 @@ tape('packed message encode + decode', function (t) {
     meeh: 42
   })
 
-  var o2 = Packed.decode(b2)
+  const o2 = Packed.decode(b2)
 
   t.same(o2, o1)
   t.end()

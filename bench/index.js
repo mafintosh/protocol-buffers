@@ -1,15 +1,15 @@
-var protobuf = require('../')
-var fs = require('fs')
-var path = require('path')
-var messages = protobuf(fs.readFileSync(path.join(__dirname, 'bench.proto')))
+const protobuf = require('../')
+const fs = require('fs')
+const path = require('path')
+const messages = protobuf(fs.readFileSync(path.join(__dirname, 'bench.proto')))
 
-var TIMES = 1000000
+const TIMES = 1000000
 
-var then = 0
-var diff = 0
+let then = 0
+let diff = 0
 
-var run = function (name, encode, decode) {
-  var EXAMPLE = {
+const run = function (name, encode, decode) {
+  const EXAMPLE = {
     foo: 'hello',
     hello: 42,
     payload: Buffer.from('a'),
@@ -23,8 +23,8 @@ var run = function (name, encode, decode) {
     }
   }
 
-  var EXAMPLE_BUFFER = encode(EXAMPLE)
-  var i
+  const EXAMPLE_BUFFER = encode(EXAMPLE)
+  let i
 
   console.log('Benchmarking %s', name)
   console.log('  Running object encoding benchmark...')
