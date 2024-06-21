@@ -25,6 +25,7 @@ function compile (messages, opts) {
   out += '/* eslint-disable indent */' + os.EOL
   out += '/* eslint-disable no-redeclare */' + os.EOL
   out += '/* eslint-disable camelcase */' + os.EOL
+  out += '/* eslint-disable no-var */' + os.EOL
   out += os.EOL
   if (!encodings) out += '// Remember to `npm install --save protocol-buffers-encodings`' + os.EOL
   out += 'var encodings = require(\'' + (encodings || 'protocol-buffers-encodings') + '\')' + os.EOL
