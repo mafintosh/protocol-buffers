@@ -442,7 +442,19 @@ module.exports = function (schema, extraEncodings, inlineEnc) {
         })
       }
 
-      if (packed) {
+      const packedNumeric = f.repeated && (e.type === 0 || e.type === 1 || e.type === 5)
+      if (packedNumeric) {
+        decode()
+          ('var packedEnd = -1')
+          ('if ((prefix & 7) === 2) {')
+            ('packedEnd = varint.decode(buf, offset)')
+            ('offset += varint.decode.bytes')
+            ('packedEnd += offset')
+            ('if (packedEnd > end) throw new Error("Decoded message is not valid")')
+            ('if (offset === packedEnd) break')
+          ('}')
+          ('do {')
+      } else if (packed) {
         decode()
           ('var packedEnd = varint.decode(buf, offset)')
           ('offset += varint.decode.bytes')
@@ -471,7 +483,11 @@ module.exports = function (schema, extraEncodings, inlineEnc) {
 
       decode('offset += %s.decode.bytes', encString(dedupIndex[i], dedupEnc))
 
-      if (packed) decode('}')
+      if (packedNumeric) {
+        decode()
+          ('} while (offset < packedEnd)')
+          ('if (packedEnd !== -1 && offset !== packedEnd) throw new Error("Decoded message is not valid")')
+      } else if (packed) decode('}')
       if (f.required) decode('found%d = true', i)
       decode('break')
     })
